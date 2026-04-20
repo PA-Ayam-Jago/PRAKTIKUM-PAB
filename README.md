@@ -201,3 +201,34 @@ API Key tidak ditulis langsung di dalam kode.
 
 * supabase_flutter
 * flutter_dotenv
+
+## Alur Aplikasi
+
+### 🖥️ Tampilan 1 – Splash Screen
+
+> <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 17 00 24" src="https://github.com/user-attachments/assets/cbb2d24c-f251-468e-b139-f56912ac7687" />
+
+---
+
+Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast. Selain sebagai pembuka, halaman ini juga berfungsi memberikan kesan awal yang profesional serta menjadi transisi sebelum pengguna masuk ke halaman utama aplikasi.
+
+--- 
+
+
+### 🔐 Tampilan 2 – Halaman Login
+
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4e890430-499d-45c5-9e13-1b8c80bb1a07" />
+
+Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi untuk dapat mengakses sistem. Desain yang digunakan cukup sederhana dan fokus, sehingga memudahkan pengguna dalam melakukan proses login. Jika pengguna belum memiliki akun, tersedia opsi “Daftar” yang akan mengarahkan ke halaman registrasi. Halaman ini menjadi gerbang utama untuk memastikan bahwa hanya pengguna yang terdaftar yang dapat masuk ke dalam sistem.
+
+
+### 📝 Tampilan 3 – Halaman Register
+
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/ad35adb4-07db-48a7-a44e-1c88b92b2f62" />
+
+--- 
+
+Halaman register digunakan oleh pengguna baru untuk membuat akun sebelum dapat menggunakan aplikasi. Pengguna diminta mengisi beberapa data seperti nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Proses ini dilengkapi dengan validasi sederhana seperti minimal panjang password agar keamanan akun tetap terjaga. Setelah berhasil mendaftar, pengguna dapat kembali ke halaman login untuk masuk ke sistem. Halaman ini berperan penting dalam menambah pengguna baru dan memastikan data pengguna tersimpan dengan baik.
+
+--- 
+
