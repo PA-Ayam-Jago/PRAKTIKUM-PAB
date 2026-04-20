@@ -90,7 +90,8 @@ Untuk mengatasi permasalahan tersebut, kami mengusulkan pembuatan aplikasi reser
 
 ### 1. Splash Screen
 
-> <img width="1920" height="1080" alt="Untitled design" src="https://github.com/user-attachments/assets/0f9fe165-9876-49a4-be99-109f58d9e925" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/c45f2a57-1d52-48f2-855e-95a883381402" />
+
 
 Tampilan awal yang muncul saat aplikasi pertama kali dibuka.
 Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase.
@@ -98,25 +99,30 @@ Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase
 
 ### 2. Login Page
 
-> <img width="1920" height="1080" alt="Untitled design (1)" src="https://github.com/user-attachments/assets/b280e579-8607-485c-acaf-bc1b2741ad0e" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/1dcc7912-43fb-4fcf-85c6-a4159cf88314" />
+
 
 Halaman yang digunakan pengguna untuk masuk ke dalam aplikasi dengan memasukkan email dan kata sandi yang sudah terdaftar.
 
 ### Register Page
 
-> <img width="235" height="458" alt="image" src="https://github.com/user-attachments/assets/74f7674e-5d09-4ab3-9ee5-554533d6af50" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4dec1f18-1c79-4feb-9093-74ba63432368" />
+
 
 halaman yang digunakan pengguna baru untuk membuat akun.
 
 ### 3. Home Page
 
-> <img width="229" height="463" alt="image" src="https://github.com/user-attachments/assets/a85b4e4f-9b76-45e5-bf40-69068a94bc2c" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/ba1332b7-6d43-4cb7-a13e-eb199a34a53e" />
+
 
 Menampilkan daftar reservasi studio yang tersedia serta navigasi ke fitur lainnya.
 
 ### 4. Reservasi Page
 
-> <img width="250" height="465" alt="image" src="https://github.com/user-attachments/assets/fcb347d4-6a3b-4858-9017-f570b7805f90" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/bb4b8cc4-eceb-4530-8e38-0bc98c738b20" />
+
+
 
 Halaman yang digunakan untuk menambah, melihat, mengedit, dan membatalkan data reservasi studio.
 
@@ -127,29 +133,17 @@ Admin dapat:
 
 ### 6. Profile Page
 
-> <img width="238" height="467" alt="image" src="https://github.com/user-attachments/assets/ba2ed1d8-bd06-4386-a34a-b66281f13c99" />
+> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/a5855367-f2f0-443a-bdfe-63fd6f2fbd75" />
+
 
 Menampilkan data pengguna.
 
 ### 7. Riwayat Reservasi
 
-> <img width="236" height="465" alt="image" src="https://github.com/user-attachments/assets/2295fc2a-7426-4bab-9abb-a79b35958d9a" />
+> <img width="1080" height="2404" alt="image" src="https://github.com/user-attachments/assets/13379273-9063-4279-a0dc-f49c0080082f" />
+
 
 Menampilkan histori penggunaan studio.
-
-## Fitur CRUD
-
-### Create
-Menambahkan data reservasi ke database Supabase.
-
-### Read
-Menampilkan daftar reservasi dari database.
-
-### Update
-Mengubah data reservasi.
-
-### Delete
-Menghapus atau membatalkan reservasi.
 
 --- 
 
