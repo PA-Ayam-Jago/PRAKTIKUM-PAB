@@ -67,6 +67,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
       appBar: AppBar(
         backgroundColor: bgDark,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
           "RIWAYAT PEMINJAMAN",
           style: TextStyle(

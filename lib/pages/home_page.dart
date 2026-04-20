@@ -132,10 +132,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCinematicBackground(double height) {
     return Positioned(
-      top: 0,
+      top: 2,
       left: 0,
       right: 0,
-      height: height * 0.65,
+      height: height * 0.55,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.85),
+                  Colors.black.withOpacity(0.95),
                   Colors.transparent,
                   bgDark,
                 ],
@@ -185,11 +185,11 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: primaryGold.withOpacity(0.4)),
+              border: Border.all(color: primaryGold.withOpacity(0.5)),
             ),
             child: const Row(
               children: [
-                Icon(Icons.auto_awesome, color: primaryGold, size: 14),
+                Icon(Icons.auto_awesome, color: primaryGold, size: 12),
                 SizedBox(width: 8),
                 Text(
                   "FEB UNMUL",
@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           decoration: const BoxDecoration(
             border: Border(left: BorderSide(color: primaryGold, width: 3)),
           ),
@@ -264,20 +264,20 @@ class _HomePageState extends State<HomePage> {
             "STUDIO PODCAST",
             style: TextStyle(
               color: primaryGold,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: FontWeight.w900,
               letterSpacing: 3,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 15),
         const Text(
           "Ruang Kreativitas",
           style: TextStyle(
             color: Colors.white,
             fontSize: 42,
             fontWeight: FontWeight.w200,
-            height: 1,
+            height: 0,
           ),
         ),
         const Text(
@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             fontSize: 42,
             fontWeight: FontWeight.w900,
-            height: 1.1,
+            height: 0,
           ),
         ),
       ],
@@ -368,7 +368,7 @@ class _HomePageState extends State<HomePage> {
       return Column(
         children: [
           _buildStatsCard(),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           _buildLargeMenuCard(
             title: "Monitoring Admin",
             subtitle: "Kelola jadwal & status reservasi",

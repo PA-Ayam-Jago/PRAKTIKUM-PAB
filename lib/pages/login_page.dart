@@ -25,6 +25,26 @@ class _LoginPageState extends State<LoginPage> {
   final Color bgDark = const Color(0xFF0A0A0A);
   final Color surfaceDark = const Color(0xFF161616);
 
+  // FUNGSI ANIMASI BLUR TRANSITION
+  Route _createBlurRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(
+              sigmaX: (1 - animation.value) * 20,
+              sigmaY: (1 - animation.value) * 20,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -40,6 +60,13 @@ class _LoginPageState extends State<LoginPage> {
 
       if (mounted) {
         _showSnackBar("Selamat Datang kembali!");
+        // Menggunakan transisi blur ke Home
+        // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        // Jika menggunakan widget langsung:
+        // Navigator.pushAndRemoveUntil(context, _createBlurRoute(const HomePage()), (route) => false);
+
+        // Sementara tetap gunakan pushNamed jika routing Anda di main.dart,
+        // tapi untuk transisi antar Page ini, Navigator.push lebih disarankan:
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     } catch (e) {
@@ -173,17 +200,13 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.isEmpty)
                             return "Email tidak boleh kosong";
-                          }
-
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           );
-                          if (!emailRegex.hasMatch(value.trim())) {
+                          if (!emailRegex.hasMatch(value.trim()))
                             return "Format email tidak valid";
-                          }
-
                           return null;
                         },
                       ),
@@ -195,12 +218,10 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icons.lock_outline_rounded,
                         isPassword: true,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.isEmpty)
                             return "Kata sandi tidak boleh kosong";
-                          }
-                          if (value.length < 6) {
+                          if (value.length < 6)
                             return "Kata sandi minimal 6 karakter";
-                          }
                           return null;
                         },
                       ),
@@ -221,11 +242,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildTopLogo() {
     return Container(
-      width: 140,
+      width: 150,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Image.asset('assets/images/Logo_FEB.jpeg', fit: BoxFit.contain),
     );
@@ -240,6 +268,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: primaryGold, width: 1.5),
+            color: Colors.black.withOpacity(0.3),
           ),
           child: Icon(Icons.mic_none_rounded, color: primaryGold, size: 35),
         ),
@@ -378,7 +407,7 @@ class _LoginPageState extends State<LoginPage> {
         GestureDetector(
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const RegisterPage()),
+            _createBlurRoute(const RegisterPage()), // TRANSISI BLUR KE REGISTER
           ),
           child: Text(
             "Daftar",

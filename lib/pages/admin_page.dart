@@ -129,7 +129,7 @@ class _AdminPageState extends State<AdminPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "ADMIN MONITORING",
+          "MONITORING",
           style: TextStyle(
             color: primaryGold,
             fontSize: 13,
@@ -328,7 +328,7 @@ class _AdminPageState extends State<AdminPage> {
             children: [
               Expanded(
                 child: Text(
-                  item.fullName.toUpperCase(),
+                  item.fullName,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

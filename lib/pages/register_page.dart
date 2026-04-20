@@ -26,6 +26,25 @@ class _RegisterPageState extends State<RegisterPage> {
   final Color bgDark = const Color(0xFF0A0A0A);
   final Color surfaceDark = const Color(0xFF161616);
 
+  Route _createBlurRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(
+              sigmaX: (1 - animation.value) * 20,
+              sigmaY: (1 - animation.value) * 20,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -104,11 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
             : Colors.green.withOpacity(0.9),
         behavior: SnackBarBehavior.floating,
         elevation: 6,
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.05,
-          left: 20,
-          right: 20,
-        ),
+        margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         duration: const Duration(seconds: 3),
       ),
@@ -187,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         _buildSlimTextField(
                           label: "EMAIL",
                           controller: _emailController,
-                          hint: "Gunakan email aktif",
+                          hint: "Masukkan email anda",
                           icon: Icons.alternate_email_rounded,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -195,9 +210,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               return "Email wajib diisi";
                             if (!RegExp(
                               r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value.trim())) {
+                            ).hasMatch(value.trim()))
                               return "Format email tidak valid";
-                            }
                             return null;
                           },
                         ),
@@ -243,11 +257,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildTopLogo() {
     return Container(
-      width: 140,
+      width: 150,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -364,10 +378,6 @@ class _RegisterPageState extends State<RegisterPage> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
@@ -375,7 +385,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 width: 1,
               ),
             ),
-            errorStyle: const TextStyle(fontSize: 11),
           ),
         ),
       ],
@@ -390,8 +399,6 @@ class _RegisterPageState extends State<RegisterPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryGold,
           foregroundColor: Colors.black,
-          disabledBackgroundColor: primaryGold.withOpacity(0.5),
-          elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -423,7 +430,9 @@ class _RegisterPageState extends State<RegisterPage> {
           style: TextStyle(color: Colors.grey[400], fontSize: 14),
         ),
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: () => Navigator.pop(
+            context,
+          ), // Pop akan otomatis trigger animasi balik jika dipanggil dari push blur
           child: Text(
             "Masuk",
             style: TextStyle(

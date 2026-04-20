@@ -246,7 +246,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "STUDIO SCHEDULE",
+          "JADWAL STUDIO",
           style: TextStyle(
             color: primaryGold,
             fontSize: 13,
