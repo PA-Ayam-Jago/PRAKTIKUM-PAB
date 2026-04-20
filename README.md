@@ -275,17 +275,31 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 > <img width="1080" height="2333" alt="image" src="https://github.com/user-attachments/assets/98d73562-ac7d-4778-9712-84282b7ee04e" />
 
+Admin memiliki halaman beranda yang menampilkan informasi akun admin beserta fitur pengelolaan sistem. Pada halaman ini terdapat ringkasan total peminjaman, misalnya jumlah sesi reservasi dalam satu bulan, serta menu utama seperti “Monitoring Admin”. Halaman ini berfungsi sebagai pusat kontrol bagi admin untuk memantau seluruh aktivitas reservasi studio.
+
 > <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/870811e8-eb78-4ece-8590-84e30a0818b1" />
+
+Ketika admin masuk ke menu monitoring, sistem akan menampilkan halaman “Riwayat Peminjaman”. Halaman ini berisi daftar seluruh data reservasi yang diajukan oleh pengguna. Setiap data menampilkan informasi seperti nama peminjam, tanggal reservasi, nomor telepon, keterangan kegiatan, dan status reservasi. Dengan adanya halaman ini, admin dapat melihat seluruh pengajuan secara lebih terpusat.
 
 > <img width="1080" height="2331" alt="image" src="https://github.com/user-attachments/assets/e79a8cf9-3400-4e86-8ce1-303793778c9d" />
 
+Pada halaman riwayat peminjaman, admin dapat memfilter data berdasarkan status tertentu, seperti “Semua”, “Pending”, “Approved”, dan “Rejected”. Fitur ini memudahkan admin dalam memisahkan data yang masih menunggu persetujuan, data yang sudah disetujui, maupun data yang ditolak. Dengan demikian, proses pengelolaan reservasi menjadi lebih cepat dan efisien.
+
 > <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/cfab4750-f72d-4395-b481-dc176ba7a435" />
+
+Selain filter status, admin juga dapat menggunakan fitur pencarian untuk mencari data berdasarkan nama atau tanggal tertentu. Misalnya, ketika admin mengetik nama “Candra”, sistem akan menampilkan data reservasi yang sesuai dengan kata kunci tersebut. Fitur ini sangat membantu ketika jumlah data reservasi sudah banyak dan admin perlu menemukan data tertentu secara cepat.
 
 > <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/4eb85190-a1dd-4a50-b21b-b2c0b76a9f50" />
 
+Melalui menu admin, proses persetujuan reservasi dilakukan. Pengajuan yang masuk dengan status “Pending” akan ditinjau oleh admin, lalu dapat diubah menjadi “Approved” apabila disetujui atau “Rejected” apabila ditolak. Dengan adanya pengelolaan status ini, admin berperan sebagai pihak yang menentukan apakah suatu jadwal reservasi dapat digunakan atau tidak.
+
 > <img width="1080" height="2337" alt="image" src="https://github.com/user-attachments/assets/da7d80cd-2bd8-4638-8a97-e2680b3ca4eb" />
 
+Pada filter “Approved”, admin dapat melihat daftar reservasi yang telah disetujui. Data ini menunjukkan bahwa jadwal tersebut sudah lolos verifikasi dan dapat digunakan oleh peminjam sesuai waktu yang ditentukan. Tampilan ini membantu admin dalam memantau jadwal yang benar-benar aktif atau sudah pasti terlaksana.
+
 > <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 23 05 46" src="https://github.com/user-attachments/assets/d419a216-010f-45f0-94c2-e875693e3572" />
+
+Pada filter “Rejected”, admin dapat melihat daftar reservasi yang ditolak. Data ini tetap disimpan dalam sistem sebagai riwayat pengajuan, sehingga admin masih dapat meninjau kembali alasan atau detail pengajuan yang pernah ditolak. Hal ini berguna untuk dokumentasi serta evaluasi pengelolaan reservasi ke depannya.
 
 menu user
 
