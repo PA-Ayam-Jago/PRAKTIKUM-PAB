@@ -214,109 +214,157 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 ## Alur Aplikasi
 
-### Menu Admin
+--- 
 
+## 👨‍💼 Menu Admin
+
+### 1. Login Admin
+
+   <img width="700" height="1571" alt="WhatsApp Image 2026-04-21 at 00 18 50" src="https://github.com/user-attachments/assets/831ed547-8bca-4cda-bb19-33a52dcbcca0" />
+
+Admin membuka aplikasi dan langsung diarahkan ke halaman login, kemudian memasukkan email dan kata sandi yang sudah terdaftar, setelah itu menekan tombol “Masuk Sekarang”, lalu sistem akan memverifikasi data ke Supabase dan jika berhasil, admin akan diarahkan ke halaman utama/admin untuk mengelola reservasi.
+
+--- 
+
+### 2. Beranda Admin
 
 > <img width="1080" height="2333" alt="image" src="https://github.com/user-attachments/assets/98d73562-ac7d-4778-9712-84282b7ee04e" />
 
-Admin memiliki halaman beranda yang menampilkan informasi akun admin beserta fitur pengelolaan sistem. Pada halaman ini terdapat ringkasan total peminjaman, misalnya jumlah sesi reservasi dalam satu bulan, serta menu utama seperti “Monitoring Admin”. Halaman ini berfungsi sebagai pusat kontrol bagi admin untuk memantau seluruh aktivitas reservasi studio.
+Setelah admin berhasil login, sistem akan menampilkan halaman beranda admin yang berisi informasi akun serta menu utama, kemudian admin dapat mengakses fitur monitoring untuk melihat dan mengelola data reservasi yang masuk.
+
+---
+
+### 3. Monitoring Reservasi
 
 > <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/870811e8-eb78-4ece-8590-84e30a0818b1" />
 
-Ketika admin masuk ke menu monitoring, sistem akan menampilkan halaman “Riwayat Peminjaman”. Halaman ini berisi daftar seluruh data reservasi yang diajukan oleh pengguna. Setiap data menampilkan informasi seperti nama peminjam, tanggal reservasi, nomor telepon, keterangan kegiatan, dan status reservasi. Dengan adanya halaman ini, admin dapat melihat seluruh pengajuan secara lebih terpusat.
+Saat admin membuka menu monitoring, sistem menampilkan halaman riwayat peminjaman yang berisi daftar seluruh data reservasi, sehingga admin dapat melihat detail pengajuan yang masuk secara terpusat.
+
+--- 
+
+### 4. Filter Data
 
 > <img width="1080" height="2331" alt="image" src="https://github.com/user-attachments/assets/e79a8cf9-3400-4e86-8ce1-303793778c9d" />
 
-Pada halaman riwayat peminjaman, admin dapat memfilter data berdasarkan status tertentu, seperti “Semua”, “Pending”, “Approved”, dan “Rejected”. Fitur ini memudahkan admin dalam memisahkan data yang masih menunggu persetujuan, data yang sudah disetujui, maupun data yang ditolak. Dengan demikian, proses pengelolaan reservasi menjadi lebih cepat dan efisien.
+Pada halaman riwayat peminjaman, admin dapat menggunakan fitur filter berdasarkan status (seperti semua, pending, approved, atau rejected) untuk menyaring dan melihat data reservasi sesuai kebutuhan.
+
+--- 
+
+### 5. Pencarian Data
 
 > <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/cfab4750-f72d-4395-b481-dc176ba7a435" />
 
-Selain filter status, admin juga dapat menggunakan fitur pencarian untuk mencari data berdasarkan nama atau tanggal tertentu. Misalnya, ketika admin mengetik nama “Candra”, sistem akan menampilkan data reservasi yang sesuai dengan kata kunci tersebut. Fitur ini sangat membantu ketika jumlah data reservasi sudah banyak dan admin perlu menemukan data tertentu secara cepat.
+Pada halaman riwayat, admin dapat menggunakan fitur pencarian untuk menemukan data reservasi tertentu berdasarkan nama atau kata kunci sehingga memudahkan pencarian data secara cepat.
+
+---
+
+### 6. Approve / Reject Reservasi
 
 > <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/4eb85190-a1dd-4a50-b21b-b2c0b76a9f50" />
 
-Melalui menu admin, proses persetujuan reservasi dilakukan. Pengajuan yang masuk dengan status “Pending” akan ditinjau oleh admin, lalu dapat diubah menjadi “Approved” apabila disetujui atau “Rejected” apabila ditolak. Dengan adanya pengelolaan status ini, admin berperan sebagai pihak yang menentukan apakah suatu jadwal reservasi dapat digunakan atau tidak.
+Pada halaman riwayat, admin dapat melihat detail reservasi dan mengubah status pengajuan dari pending menjadi approved atau rejected sebagai proses persetujuan.
+
+---
+
+### 7. Monitoring Status
+
 
 > <img width="1080" height="2337" alt="image" src="https://github.com/user-attachments/assets/da7d80cd-2bd8-4638-8a97-e2680b3ca4eb" />
 
-Pada filter “Approved”, admin dapat melihat daftar reservasi yang telah disetujui. Data ini menunjukkan bahwa jadwal tersebut sudah lolos verifikasi dan dapat digunakan oleh peminjam. Pada filter “Rejected”, admin dapat melihat daftar reservasi yang ditolak. Data ini tetap disimpan dalam sistem sebagai riwayat pengajuan, sehingga admin masih dapat meninjau kembali alasan atau detail pengajuan yang pernah ditolak. 
+Pada halaman filter status, admin dapat memilih kategori seperti approved atau rejected untuk menampilkan daftar reservasi sesuai statusnya, sehingga memudahkan dalam memantau hasil persetujuan serta mengecek data pengajuan yang sudah diproses.
+
+---
+
+### 8. Profil & Logout
 
 > <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 23 05 46" src="https://github.com/user-attachments/assets/d419a216-010f-45f0-94c2-e875693e3572" />
 
-Admin juga memiliki halaman pengaturan profil yang secara fungsi mirip dengan pengguna biasa, yaitu untuk memperbarui foto profil, nama, email, dan deskripsi akun
+Pada halaman profil, admin dapat melihat dan mengubah informasi akun seperti foto, nama, email, dan deskripsi, kemudian menyimpan perubahan untuk memperbarui data, serta dapat melakukan logout untuk keluar dari aplikasi dan kembali ke halaman login.
 
-menu user
+---
+
+## 👤 Menu User
+
+### 1. Splash Screen
 
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/40cf07db-8641-478b-9bc1-198ab8159443" />
 
-Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast.
+Saat aplikasi dibuka, pengguna akan melihat halaman splash screen yang menampilkan logo sebagai identitas aplikasi dan memberikan kesan awal, kemudian setelah beberapa saat sistem akan secara otomatis mengarahkan pengguna ke halaman login untuk melanjutkan penggunaan aplikasi.
+
+---
+
+### 2. Login
 
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/4c664e46-3fdb-4885-8b75-46be6400e5c0" />
 
-Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi yang telah terdaftar agar dapat mengakses sistem. 
+Setelah melewati splash screen, pengguna akan diarahkan ke halaman login untuk memasukkan email dan kata sandi yang sudah terdaftar, lalu menekan tombol masuk agar dapat mengakses fitur utama dalam aplikasi.
+
+---
+
+### 3. Register
 
 > <img width="706" height="1528" alt="image" src="https://github.com/user-attachments/assets/ff73b6ab-386d-4f50-8d81-ebdb7e7464b4" />
 
-Bagi pengguna yang belum memiliki akun, proses pendaftaran dilakukan melalui halaman “Gabung ke Studio”. Pada halaman ini, pengguna diminta mengisi nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Setelah seluruh data diisi dengan benar, pengguna dapat menekan tombol “Daftar Sekarang” untuk membuat akun baru. 
+Jika pengguna belum memiliki akun, pengguna dapat masuk ke halaman register dengan mengisi data seperti nama lengkap, email, kata sandi, dan konfirmasi kata sandi, kemudian menekan tombol daftar untuk membuat akun baru agar bisa login ke dalam aplikasi.
+
+---
+
+### 4. Beranda User
 
 > <img width="706" height="1523" alt="image" src="https://github.com/user-attachments/assets/29a27fed-11fe-4dfc-812d-a47661b243f9" />
 
-Setelah berhasil login, pengguna akan diarahkan ke halaman beranda. Halaman ini menampilkan informasi singkat mengenai akun yang sedang aktif, seperti nama dan email pengguna. Pada halaman ini juga tersedia menu utama berupa “Reservasi Studio” yang menjadi akses utama menuju fitur peminjaman atau pemesanan studio.
+Setelah berhasil login, pengguna akan diarahkan ke halaman beranda yang menampilkan informasi akun serta menu utama, kemudian pengguna dapat memilih fitur seperti reservasi studio untuk melanjutkan proses penggunaan aplikasi.
+
+---
+
+### 5. Halaman Reservasi
 
 > <img width="1080" height="2338" alt="image" src="https://github.com/user-attachments/assets/968bc194-322f-4823-9eb8-92ee7ef44d9d" />
 
-Ketika pengguna memilih menu reservasi, sistem akan menampilkan halaman jadwal studio. Pada halaman ini, pengguna dapat melihat daftar jadwal yang tersedia, melakukan pencarian jadwal, serta menggunakan filter seperti “Terbaru”, “Terlama”, dan “Reservasi Saya”. Selain itu, sistem juga menampilkan informasi jam operasional studio, yaitu pukul 08.00–17.00 WITA. 
+Saat pengguna masuk ke menu reservasi, sistem akan menampilkan halaman jadwal studio yang berisi daftar reservasi yang tersedia, kemudian pengguna dapat melihat, mencari, atau memfilter jadwal sesuai kebutuhan sebelum melakukan pemesanan.
+
+---
+
+### 6. Tambah Reservasi
 
 > <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/e1bc0c9d-6d57-4b82-a069-212dcaafb39b" />
 
-Untuk membuat reservasi baru, pengguna dapat menekan tombol tambah (+) yang tersedia pada halaman jadwal. Sistem kemudian akan menampilkan form pengajuan jadwal yang harus diisi, meliputi nama peminjam, nomor telepon, tanggal reservasi, jam mulai, jam selesai, dan deskripsi kegiatan
+Untuk membuat reservasi baru, pengguna dapat menekan tombol tambah pada halaman jadwal, lalu sistem akan menampilkan form pengajuan yang harus diisi seperti nama peminjam, nomor telepon, tanggal, jam mulai, jam selesai, dan deskripsi kegiatan sebelum data dikirim ke sistem.
+
+---
+
+### 7. Validasi Data
 
 > <img width="1079" height="2339" alt="image" src="https://github.com/user-attachments/assets/e68a59f4-e36a-432a-8331-4c723543fae0" />
 
-Sebelum pengajuan diproses, sistem akan melakukan validasi terhadap data yang dimasukkan. Salah satu validasi yang terlihat pada tampilan adalah pengecekan waktu, yaitu jam selesai harus lebih besar dari jam mulai.
+Sebelum data reservasi dikirim, sistem akan melakukan validasi terhadap input yang dimasukkan oleh pengguna, seperti memastikan waktu mulai dan selesai sesuai, sehingga jika terdapat kesalahan maka pengguna harus memperbaikinya terlebih dahulu sebelum melanjutkan proses pengajuan.
+
+---
+
+### 8. Status Pending
 
 > <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/696f54e2-f7ae-4d61-a022-8aa05f814026" />
 
-Setelah pengajuan berhasil dikirim, sistem akan memberikan notifikasi bahwa data berhasil masuk dan sedang menunggu persetujuan. Jadwal yang diajukan kemudian akan muncul dalam daftar reservasi dengan status “Pending”. 
+Setelah data reservasi berhasil dikirim, sistem akan menampilkan notifikasi bahwa pengajuan berhasil dan statusnya menjadi pending, kemudian data tersebut akan masuk ke daftar reservasi untuk menunggu persetujuan dari admin.
+
+---
+
+### 9. Daftar Reservasi
 
 > <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/517695cc-01e9-4732-92b1-b0bbbfee273e" />
 
-Pengguna dapat melihat daftar jadwal yang telah diajukan melalui halaman reservasi. Pada halaman ini, pengguna dapat mengetahui status reservasi, seperti “Pending”, “Approved”, atau “Selesai”. Selain melihat status, pengguna juga dapat melakukan perubahan data melalui fitur edit atau menghapus reservasi melalui fitur hapus. Saat memilih hapus, sistem menampilkan dialog konfirmasi agar pengguna tidak menghapus data secara tidak sengaja.
+Pada halaman reservasi, pengguna dapat melihat daftar pengajuan yang telah dibuat beserta statusnya seperti pending, approved, atau selesai, kemudian pengguna juga dapat mengedit atau menghapus reservasi jika diperlukan melalui fitur yang tersedia.
+
+---
+
+### 10. Profil User
 
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/2fcd7566-f483-4d61-9a6e-859311eb63ed" />
 
-Aplikasi juga menyediakan halaman pengaturan profil yang memungkinkan pengguna memperbarui data pribadinya. Data yang dapat diubah antara lain foto profil, nama lengkap, email, dan deskripsi singkat. Setelah perubahan dilakukan, pengguna dapat menekan tombol “Simpan Perubahan”, lalu sistem akan menampilkan notifikasi bahwa profil berhasil diperbarui.
+Pada halaman profil, pengguna dapat melihat dan mengubah data pribadi seperti foto, nama, email, dan deskripsi, kemudian menyimpan perubahan, serta dapat melakukan logout untuk keluar dari aplikasi dan kembali ke halaman login.
 
 > <img width="1080" height="2344" alt="image" src="https://github.com/user-attachments/assets/abdbd057-9624-40df-9886-961e0a01df8a" />
 
-Jika pengguna ingin mengakhiri sesi, tersedia fitur “Keluar dari akun”. Saat tombol ini dipilih, sistem akan menampilkan konfirmasi terlebih dahulu untuk memastikan keputusan pengguna. Jika disetujui, maka pengguna akan keluar dari aplikasi dan kembali ke halaman login.
-### 🖥️ Tampilan 1 – Splash Screen
-
-> <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 17 00 24" src="https://github.com/user-attachments/assets/cbb2d24c-f251-468e-b139-f56912ac7687" />
-
----
-
-Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast. Selain sebagai pembuka, halaman ini juga berfungsi memberikan kesan awal yang profesional serta menjadi transisi sebelum pengguna masuk ke halaman berikutnya.
-
---- 
-
-
-### 🔐 Tampilan 2 – Halaman Login
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4e890430-499d-45c5-9e13-1b8c80bb1a07" />
-
----
-
-Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi yang telah terdaftar agar dapat mengakses sistem. Tampilan login dibuat sederhana dan fokus agar memudahkan proses masuk ke aplikasi. Jika pengguna belum memiliki akun, tersedia opsi “Daftar” yang akan mengarahkan ke halaman registrasi. Halaman ini menjadi pintu awal untuk memastikan hanya pengguna yang memiliki akun yang dapat menggunakan sistem.
-
----
-
-### 📝 Tampilan 3 – Halaman Register
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/ad35adb4-07db-48a7-a44e-1c88b92b2f62" />
-
---- 
-
-Bagi pengguna yang belum memiliki akun, proses pendaftaran dilakukan melalui halaman “Gabung ke Studio”. Pada halaman ini, pengguna diminta mengisi nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Setelah seluruh data diisi dengan benar, pengguna dapat menekan tombol “Daftar Sekarang” untuk membuat akun baru. Halaman ini berfungsi sebagai sarana bagi pengguna baru agar dapat mengakses fitur reservasi studio.
+Saat pengguna memilih fitur logout, sistem akan menampilkan konfirmasi terlebih dahulu, kemudian jika disetujui, pengguna akan keluar dari aplikasi dan diarahkan kembali ke halaman login.
 
 --- 
