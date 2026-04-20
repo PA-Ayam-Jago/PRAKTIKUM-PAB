@@ -104,21 +104,21 @@ Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase
 
 Halaman yang digunakan pengguna untuk masuk ke dalam aplikasi dengan memasukkan email dan kata sandi yang sudah terdaftar.
 
-### Register Page
+### 3. Register Page
 
 > <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4dec1f18-1c79-4feb-9093-74ba63432368" />
 
 
 halaman yang digunakan pengguna baru untuk membuat akun.
 
-### 3. Home Page
+### 4. Home Page
 
 > <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/ba1332b7-6d43-4cb7-a13e-eb199a34a53e" />
 
 
 Menampilkan daftar reservasi studio yang tersedia serta navigasi ke fitur lainnya.
 
-### 4. Reservasi Page
+### 5. Reservasi Page
 
 > <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/bb4b8cc4-eceb-4530-8e38-0bc98c738b20" />
 
@@ -126,7 +126,7 @@ Menampilkan daftar reservasi studio yang tersedia serta navigasi ke fitur lainny
 
 Halaman yang digunakan untuk menambah, melihat, mengedit, dan membatalkan data reservasi studio.
 
-### 5. Admin Page
+### 6. Admin Page
 
 > <img width="1080" height="2338" alt="WhatsApp Image 2026-04-20 at 22 59 07" src="https://github.com/user-attachments/assets/0159e74b-c995-412a-9812-38f42130019d" />
 
@@ -134,14 +134,14 @@ Admin dapat:
 - Menyetujui (approve) reservasi
 - Menolak reservasi
 
-### 6. Profile Page
+### 7. Profile Page
 
 > <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/a5855367-f2f0-443a-bdfe-63fd6f2fbd75" />
 
 
 Menampilkan data pengguna.
 
-### 7. Riwayat Reservasi
+### 8. Riwayat Reservasi
 
 > <img width="1080" height="2404" alt="image" src="https://github.com/user-attachments/assets/13379273-9063-4279-a0dc-f49c0080082f" />
 
@@ -269,6 +269,23 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 --- 
 
 ## Alur Aplikasi
+
+### Menu Admin
+
+> <img width="1080" height="2333" alt="image" src="https://github.com/user-attachments/assets/98d73562-ac7d-4778-9712-84282b7ee04e" />
+
+> <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/870811e8-eb78-4ece-8590-84e30a0818b1" />
+
+> <img width="1080" height="2331" alt="image" src="https://github.com/user-attachments/assets/e79a8cf9-3400-4e86-8ce1-303793778c9d" />
+
+> <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/cfab4750-f72d-4395-b481-dc176ba7a435" />
+
+> <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/4eb85190-a1dd-4a50-b21b-b2c0b76a9f50" />
+
+> <img width="1080" height="2337" alt="image" src="https://github.com/user-attachments/assets/da7d80cd-2bd8-4638-8a97-e2680b3ca4eb" />
+
+> <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 23 05 46" src="https://github.com/user-attachments/assets/d419a216-010f-45f0-94c2-e875693e3572" />
+
 
 ### 🖥️ Tampilan 1 – Splash Screen
 
