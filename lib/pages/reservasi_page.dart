@@ -423,7 +423,6 @@ class _ReservasiPageState extends State<ReservasiPage> {
           final fullName = (i['full_name'] ?? "").toString().toLowerCase();
           final tanggalRaw = (i['tanggal'] ?? "").toString();
 
-          // Format tanggal agar bisa dicari dengan nama hari atau bulan (Opsional)
           String tanggalFormatted = "";
           try {
             final dateObj = DateTime.parse(tanggalRaw);

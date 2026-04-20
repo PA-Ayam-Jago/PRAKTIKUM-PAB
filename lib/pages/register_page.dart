@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
@@ -430,9 +431,11 @@ class _RegisterPageState extends State<RegisterPage> {
           style: TextStyle(color: Colors.grey[400], fontSize: 14),
         ),
         GestureDetector(
-          onTap: () => Navigator.pop(
-            context,
-          ), // Pop akan otomatis trigger animasi balik jika dipanggil dari push blur
+          onTap: () {
+            Navigator.of(
+              context,
+            ).pushReplacement(_createBlurRoute(const LoginPage()));
+          },
           child: Text(
             "Masuk",
             style: TextStyle(

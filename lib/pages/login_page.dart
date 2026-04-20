@@ -60,13 +60,6 @@ class _LoginPageState extends State<LoginPage> {
 
       if (mounted) {
         _showSnackBar("Selamat Datang kembali!");
-        // Menggunakan transisi blur ke Home
-        // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        // Jika menggunakan widget langsung:
-        // Navigator.pushAndRemoveUntil(context, _createBlurRoute(const HomePage()), (route) => false);
-
-        // Sementara tetap gunakan pushNamed jika routing Anda di main.dart,
-        // tapi untuk transisi antar Page ini, Navigator.push lebih disarankan:
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     } catch (e) {
