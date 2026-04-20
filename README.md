@@ -272,6 +272,7 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 ### Menu Admin
 
+
 > <img width="1080" height="2333" alt="image" src="https://github.com/user-attachments/assets/98d73562-ac7d-4778-9712-84282b7ee04e" />
 
 > <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/870811e8-eb78-4ece-8590-84e30a0818b1" />
@@ -293,7 +294,7 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 ---
 
-Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast. Selain sebagai pembuka, halaman ini juga berfungsi memberikan kesan awal yang profesional serta menjadi transisi sebelum pengguna masuk ke halaman utama aplikasi.
+Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast. Selain sebagai pembuka, halaman ini juga berfungsi memberikan kesan awal yang profesional serta menjadi transisi sebelum pengguna masuk ke halaman berikutnya.
 
 --- 
 
@@ -302,8 +303,11 @@ Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menam
 
 > <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4e890430-499d-45c5-9e13-1b8c80bb1a07" />
 
-Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi untuk dapat mengakses sistem. Desain yang digunakan cukup sederhana dan fokus, sehingga memudahkan pengguna dalam melakukan proses login. Jika pengguna belum memiliki akun, tersedia opsi “Daftar” yang akan mengarahkan ke halaman registrasi. Halaman ini menjadi gerbang utama untuk memastikan bahwa hanya pengguna yang terdaftar yang dapat masuk ke dalam sistem.
+---
 
+Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi yang telah terdaftar agar dapat mengakses sistem. Tampilan login dibuat sederhana dan fokus agar memudahkan proses masuk ke aplikasi. Jika pengguna belum memiliki akun, tersedia opsi “Daftar” yang akan mengarahkan ke halaman registrasi. Halaman ini menjadi pintu awal untuk memastikan hanya pengguna yang memiliki akun yang dapat menggunakan sistem.
+
+---
 
 ### 📝 Tampilan 3 – Halaman Register
 
@@ -311,7 +315,6 @@ Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada h
 
 --- 
 
-Halaman register digunakan oleh pengguna baru untuk membuat akun sebelum dapat menggunakan aplikasi. Pengguna diminta mengisi beberapa data seperti nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Proses ini dilengkapi dengan validasi sederhana seperti minimal panjang password agar keamanan akun tetap terjaga. Setelah berhasil mendaftar, pengguna dapat kembali ke halaman login untuk masuk ke sistem. Halaman ini berperan penting dalam menambah pengguna baru dan memastikan data pengguna tersimpan dengan baik.
+Bagi pengguna yang belum memiliki akun, proses pendaftaran dilakukan melalui halaman “Gabung ke Studio”. Pada halaman ini, pengguna diminta mengisi nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Setelah seluruh data diisi dengan benar, pengguna dapat menekan tombol “Daftar Sekarang” untuk membuat akun baru. Halaman ini berfungsi sebagai sarana bagi pengguna baru agar dapat mengakses fitur reservasi studio.
 
 --- 
-
