@@ -222,36 +222,35 @@ FutureBuilder(
 
 ## State Management
 
-Aplikasi ini menggunakan metode setState untuk mengelola perubahan state pada widget. Metode ini digunakan untuk memperbarui tampilan secara langsung ketika terjadi perubahan data, seperti saat menampilkan hasil reservasi atau perubahan input dari pengguna.
+Aplikasi ini menggunakan metode **setState** untuk mengelola perubahan state pada widget. Metode ini digunakan untuk memperbarui tampilan secara langsung ketika terjadi perubahan data, seperti saat menampilkan hasil reservasi atau perubahan input dari pengguna.
 
-### Navigasi dalam aplikasi menggunakan Navigator dari Flutter, yaitu:
+**🔀 Navigation**
 
-- Navigator.push → untuk berpindah ke halaman baru
-  
-- Navigator.pushReplacement → untuk mengganti halaman saat ini tanpa bisa kembali ke halaman sebelumnya
+- **Navigator.push** → untuk berpindah ke halaman baru  
+- **Navigator.pushReplacement** → untuk mengganti halaman saat ini tanpa bisa kembali  
 
-## Environment Configuration
+**🔐 Environment Configuration**
 
-Aplikasi menggunakan file .env untuk menyimpan konfigurasi penting seperti API Key agar lebih aman dan tidak ditulis langsung di dalam kode.
+Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API Key agar lebih aman. Menggunakan package **flutter_dotenv** untuk membaca file `.env`, sehingga API Key tidak ditulis langsung di dalam kode.
 
-- SUPABASE_URL=your_url
+- SUPABASE_URL=your_url  
+- SUPABASE_ANON_KEY=your_key  
 
-- SUPABASE_ANON_KEY=your_key
-
-Menggunakan package:
-
-* flutter_dotenv
-
-API Key tidak ditulis langsung di dalam kode.
+--- 
 
 ## Struktur Folder
 
-<img width="222" height="313" alt="image" src="https://github.com/user-attachments/assets/9d19150b-ab9f-4998-a2fd-0fc8e2483eff" />
+> <img width="222" height="313" alt="image" src="https://github.com/user-attachments/assets/9d19150b-ab9f-4998-a2fd-0fc8e2483eff" />
+
+--- 
 
 ## Package yang Digunakan
 
-* supabase_flutter
-* flutter_dotenv
+| Flutter | Supabase |
+|--------|----------|
+| <img src="https://img.icons8.com/color/96/flutter.png" width="70"/> | <img src="https://seeklogo.com/images/S/supabase-logo-DCC676FFE2-seeklogo.com.png" width="70"/> |
+
+--- 
 
 ## Alur Aplikasi
 
