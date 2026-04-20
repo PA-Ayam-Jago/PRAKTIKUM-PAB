@@ -295,36 +295,57 @@ Melalui menu admin, proses persetujuan reservasi dilakukan. Pengajuan yang masuk
 
 > <img width="1080" height="2337" alt="image" src="https://github.com/user-attachments/assets/da7d80cd-2bd8-4638-8a97-e2680b3ca4eb" />
 
-Pada filter “Approved”, admin dapat melihat daftar reservasi yang telah disetujui. Data ini menunjukkan bahwa jadwal tersebut sudah lolos verifikasi dan dapat digunakan oleh peminjam sesuai waktu yang ditentukan. Tampilan ini membantu admin dalam memantau jadwal yang benar-benar aktif atau sudah pasti terlaksana.
+Pada filter “Approved”, admin dapat melihat daftar reservasi yang telah disetujui. Data ini menunjukkan bahwa jadwal tersebut sudah lolos verifikasi dan dapat digunakan oleh peminjam. Pada filter “Rejected”, admin dapat melihat daftar reservasi yang ditolak. Data ini tetap disimpan dalam sistem sebagai riwayat pengajuan, sehingga admin masih dapat meninjau kembali alasan atau detail pengajuan yang pernah ditolak. 
 
 > <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 23 05 46" src="https://github.com/user-attachments/assets/d419a216-010f-45f0-94c2-e875693e3572" />
 
-Pada filter “Rejected”, admin dapat melihat daftar reservasi yang ditolak. Data ini tetap disimpan dalam sistem sebagai riwayat pengajuan, sehingga admin masih dapat meninjau kembali alasan atau detail pengajuan yang pernah ditolak. Hal ini berguna untuk dokumentasi serta evaluasi pengelolaan reservasi ke depannya.
+Admin juga memiliki halaman pengaturan profil yang secara fungsi mirip dengan pengguna biasa, yaitu untuk memperbarui foto profil, nama, email, dan deskripsi akun
 
 menu user
 
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/40cf07db-8641-478b-9bc1-198ab8159443" />
 
+Halaman pertama yang muncul saat aplikasi dibuka adalah splash screen yang menampilkan identitas aplikasi Studio Podcast Fakultas Ekonomi dan Bisnis Universitas Mulawarman. Pada tampilan ini, pengguna diperkenalkan dengan branding aplikasi melalui logo mikrofon yang melambangkan aktivitas podcast.
+
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/4c664e46-3fdb-4885-8b75-46be6400e5c0" />
+
+Setelah melewati splash screen, pengguna akan diarahkan ke halaman login. Pada halaman ini, pengguna diminta untuk memasukkan email dan kata sandi yang telah terdaftar agar dapat mengakses sistem. 
 
 > <img width="706" height="1528" alt="image" src="https://github.com/user-attachments/assets/ff73b6ab-386d-4f50-8d81-ebdb7e7464b4" />
 
+Bagi pengguna yang belum memiliki akun, proses pendaftaran dilakukan melalui halaman “Gabung ke Studio”. Pada halaman ini, pengguna diminta mengisi nama lengkap, email aktif, kata sandi, dan konfirmasi kata sandi. Setelah seluruh data diisi dengan benar, pengguna dapat menekan tombol “Daftar Sekarang” untuk membuat akun baru. 
+
 > <img width="706" height="1523" alt="image" src="https://github.com/user-attachments/assets/29a27fed-11fe-4dfc-812d-a47661b243f9" />
+
+Setelah berhasil login, pengguna akan diarahkan ke halaman beranda. Halaman ini menampilkan informasi singkat mengenai akun yang sedang aktif, seperti nama dan email pengguna. Pada halaman ini juga tersedia menu utama berupa “Reservasi Studio” yang menjadi akses utama menuju fitur peminjaman atau pemesanan studio.
 
 > <img width="1080" height="2338" alt="image" src="https://github.com/user-attachments/assets/968bc194-322f-4823-9eb8-92ee7ef44d9d" />
 
+Ketika pengguna memilih menu reservasi, sistem akan menampilkan halaman jadwal studio. Pada halaman ini, pengguna dapat melihat daftar jadwal yang tersedia, melakukan pencarian jadwal, serta menggunakan filter seperti “Terbaru”, “Terlama”, dan “Reservasi Saya”. Selain itu, sistem juga menampilkan informasi jam operasional studio, yaitu pukul 08.00–17.00 WITA. 
+
 > <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/e1bc0c9d-6d57-4b82-a069-212dcaafb39b" />
+
+Untuk membuat reservasi baru, pengguna dapat menekan tombol tambah (+) yang tersedia pada halaman jadwal. Sistem kemudian akan menampilkan form pengajuan jadwal yang harus diisi, meliputi nama peminjam, nomor telepon, tanggal reservasi, jam mulai, jam selesai, dan deskripsi kegiatan
 
 > <img width="1079" height="2339" alt="image" src="https://github.com/user-attachments/assets/e68a59f4-e36a-432a-8331-4c723543fae0" />
 
+Sebelum pengajuan diproses, sistem akan melakukan validasi terhadap data yang dimasukkan. Salah satu validasi yang terlihat pada tampilan adalah pengecekan waktu, yaitu jam selesai harus lebih besar dari jam mulai.
+
 > <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/696f54e2-f7ae-4d61-a022-8aa05f814026" />
+
+Setelah pengajuan berhasil dikirim, sistem akan memberikan notifikasi bahwa data berhasil masuk dan sedang menunggu persetujuan. Jadwal yang diajukan kemudian akan muncul dalam daftar reservasi dengan status “Pending”. 
 
 > <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/517695cc-01e9-4732-92b1-b0bbbfee273e" />
 
+Pengguna dapat melihat daftar jadwal yang telah diajukan melalui halaman reservasi. Pada halaman ini, pengguna dapat mengetahui status reservasi, seperti “Pending”, “Approved”, atau “Selesai”. Selain melihat status, pengguna juga dapat melakukan perubahan data melalui fitur edit atau menghapus reservasi melalui fitur hapus. Saat memilih hapus, sistem menampilkan dialog konfirmasi agar pengguna tidak menghapus data secara tidak sengaja.
+
 > <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/2fcd7566-f483-4d61-9a6e-859311eb63ed" />
+
+Aplikasi juga menyediakan halaman pengaturan profil yang memungkinkan pengguna memperbarui data pribadinya. Data yang dapat diubah antara lain foto profil, nama lengkap, email, dan deskripsi singkat. Setelah perubahan dilakukan, pengguna dapat menekan tombol “Simpan Perubahan”, lalu sistem akan menampilkan notifikasi bahwa profil berhasil diperbarui.
 
 > <img width="1080" height="2344" alt="image" src="https://github.com/user-attachments/assets/abdbd057-9624-40df-9886-961e0a01df8a" />
 
+Jika pengguna ingin mengakhiri sesi, tersedia fitur “Keluar dari akun”. Saat tombol ini dipilih, sistem akan menampilkan konfirmasi terlebih dahulu untuk memastikan keputusan pengguna. Jika disetujui, maka pengguna akan keluar dari aplikasi dan kembali ke halaman login.
 ### 🖥️ Tampilan 1 – Splash Screen
 
 > <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 17 00 24" src="https://github.com/user-attachments/assets/cbb2d24c-f251-468e-b139-f56912ac7687" />
