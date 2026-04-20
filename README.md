@@ -50,13 +50,6 @@ Admin memiliki akses untuk mengelola seluruh reservasi yang masuk, termasuk meny
 
 ---
 
-Aplikasi ini memungkinkan pengguna untuk:
-- Login dan register akun
-- Melakukan reservasi studio
-- Melihat dan mengelola reservasi
-- Monitoring penggunaan studio
-- Melihat riwayat peminjaman
-
 ## Permasalahan
 
 Proses peminjaman Studio Podcast FEB saat ini masih dilakukan secara manual melalui chat WhatsApp tanpa adanya sistem yang terintegrasi. Hal ini menyebabkan proses pengelolaan menjadi kurang efisien dan tidak terstruktur. Selain itu, kondisi ini menimbulkan beberapa kendala seperti tidak adanya pencatatan data yang terpusat, ketergantungan pada satu pihak sebagai penanggung jawab, serta tidak tersedianya sistem monitoring yang jelas untuk mengetahui status penggunaan studio dan riwayat peminjaman.
@@ -88,65 +81,16 @@ Untuk mengatasi permasalahan tersebut, kami mengusulkan pembuatan aplikasi reser
 
 ## Fitur Aplikasi
 
-### 1. Splash Screen
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/c45f2a57-1d52-48f2-855e-95a883381402" />
-
-
-Tampilan awal yang muncul saat aplikasi pertama kali dibuka.
-Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase.
-
-
-### 2. Login Page
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/1dcc7912-43fb-4fcf-85c6-a4159cf88314" />
-
-
-Halaman yang digunakan pengguna untuk masuk ke dalam aplikasi dengan memasukkan email dan kata sandi yang sudah terdaftar.
-
-### 3. Register Page
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/4dec1f18-1c79-4feb-9093-74ba63432368" />
-
-
-halaman yang digunakan pengguna baru untuk membuat akun.
-
-### 4. Home Page
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/ba1332b7-6d43-4cb7-a13e-eb199a34a53e" />
-
-
-Menampilkan daftar reservasi studio yang tersedia serta navigasi ke fitur lainnya.
-
-### 5. Reservasi Page
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/bb4b8cc4-eceb-4530-8e38-0bc98c738b20" />
-
-
-
-Halaman yang digunakan untuk menambah, melihat, mengedit, dan membatalkan data reservasi studio.
-
-### 6. Admin Page
-
-> <img width="1080" height="2338" alt="WhatsApp Image 2026-04-20 at 22 59 07" src="https://github.com/user-attachments/assets/0159e74b-c995-412a-9812-38f42130019d" />
-
-Admin dapat:
-- Menyetujui (approve) reservasi
-- Menolak reservasi
-
-### 7. Profile Page
-
-> <img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/a5855367-f2f0-443a-bdfe-63fd6f2fbd75" />
-
-
-Menampilkan data pengguna.
-
-### 8. Riwayat Reservasi
-
-> <img width="1080" height="2404" alt="image" src="https://github.com/user-attachments/assets/13379273-9063-4279-a0dc-f49c0080082f" />
-
-
-Menampilkan histori penggunaan studio.
+| No | Fitur            | Deskripsi |
+|----|------------------|----------|
+| 1  | Splash Screen    | Menampilkan tampilan awal berupa logo aplikasi sebagai identitas dan pembuka sebelum masuk ke halaman berikutnya. |
+| 2  | Login Page       | Halaman untuk masuk ke aplikasi menggunakan email dan password yang telah terdaftar. |
+| 3  | Register Page    | Halaman untuk pengguna baru dalam membuat akun agar dapat mengakses aplikasi. |
+| 4  | Home Page        | Menampilkan informasi utama serta navigasi ke fitur dalam aplikasi. |
+| 5  | Reservasi Page   | Digunakan untuk menambah, melihat, mengedit, dan menghapus data reservasi studio. |
+| 6  | Admin Page       | Halaman khusus admin untuk menyetujui atau menolak permintaan reservasi. |
+| 7  | Profile Page     | Menampilkan dan mengelola data pribadi pengguna. |
+| 8  | Riwayat Reservasi| Menampilkan histori atau catatan penggunaan studio oleh pengguna. |
 
 --- 
 
