@@ -1,11 +1,44 @@
-# Proyek Akhir PAB 2026
-**Kelompok AYAM JAGO**
+<h1 align="center">🎙️ Studio PodCast</h1>
 
-## Anggota Kelompok
-- IRVANI CANLUSTY MISSA (2409116019)
-- DENY CANDRA KASUMA (2409116024)
-- ZELSYA RIZQITA RAHMADHINI (2409116022)
-- NURHIDAYAH (2409116002)
+<p align="center">
+  Centralized Podcast Studio Reservation & Monitoring 🎧
+</p>
+<p align="center">
+  <sub>Proyek Akhir Pemrograman Aplikasi Bergerak 2026</sub><br>
+  <sub>Mitra: Fakultas Ekonomi & Bisnis</sub>
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2d5aac2a-7e77-4dd8-b31c-6d1c3660627e" width="80%" />
+</p>
+
+<p align="center">
+   ───────────── 🎙️ ───────────── 
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-Framework-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Supabase-Backend-3ecf8e?style=for-the-badge">
+  <img src="https://img.shields.io/badge/CRUD-Implemented-orange?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Multi%20Page-Navigation-purple?style=for-the-badge">
+</p>
+
+<p align="center">
+   ───────────── 🎙️ ───────────── 
+</p>
+</p>
+
+---
+
+## Kelompok Ayam Jago
+
+| No | Nama                         | NIM        |
+|----|------------------------------|-----------|
+| 1  | IRVANI CANLUSTY MISSA        | 2409116019 |
+| 2  | DENY CANDRA KASUMA           | 2409116024 |
+| 3  | ZELSYA RIZQITA RAHMADHINI    | 2409116022 |
+| 4  | NURHIDAYAH                   | 2409116002 |
+
+---
 
 ## Mitra
 Fakultas Ekonomi & Bisnis
