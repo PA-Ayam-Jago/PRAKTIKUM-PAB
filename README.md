@@ -127,6 +127,9 @@ Menampilkan daftar reservasi studio yang tersedia serta navigasi ke fitur lainny
 Halaman yang digunakan untuk menambah, melihat, mengedit, dan membatalkan data reservasi studio.
 
 ### 5. Admin Page
+
+> <img width="1080" height="2338" alt="WhatsApp Image 2026-04-20 at 22 59 07" src="https://github.com/user-attachments/assets/0159e74b-c995-412a-9812-38f42130019d" />
+
 Admin dapat:
 - Menyetujui (approve) reservasi
 - Menolak reservasi
