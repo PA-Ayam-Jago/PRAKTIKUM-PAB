@@ -47,6 +47,7 @@ Mengembangkan aplikasi mobile berbasis Flutter dengan Supabase untuk:
 Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase.
 
 ### 2. Register Page
+IMG-20260420-WA0015.jpg
 Pengguna dapat membuat akun baru dengan role (Mahasiswa/Admin).
 
 ### 3. Home Page
