@@ -287,6 +287,29 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 > <img width="718" height="1600" alt="WhatsApp Image 2026-04-20 at 23 05 46" src="https://github.com/user-attachments/assets/d419a216-010f-45f0-94c2-e875693e3572" />
 
+menu user
+
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/40cf07db-8641-478b-9bc1-198ab8159443" />
+
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/4c664e46-3fdb-4885-8b75-46be6400e5c0" />
+
+> <img width="706" height="1528" alt="image" src="https://github.com/user-attachments/assets/ff73b6ab-386d-4f50-8d81-ebdb7e7464b4" />
+
+> <img width="706" height="1523" alt="image" src="https://github.com/user-attachments/assets/29a27fed-11fe-4dfc-812d-a47661b243f9" />
+
+> <img width="1080" height="2338" alt="image" src="https://github.com/user-attachments/assets/968bc194-322f-4823-9eb8-92ee7ef44d9d" />
+
+> <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/e1bc0c9d-6d57-4b82-a069-212dcaafb39b" />
+
+> <img width="1079" height="2339" alt="image" src="https://github.com/user-attachments/assets/e68a59f4-e36a-432a-8331-4c723543fae0" />
+
+> <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/696f54e2-f7ae-4d61-a022-8aa05f814026" />
+
+> <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/517695cc-01e9-4732-92b1-b0bbbfee273e" />
+
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/2fcd7566-f483-4d61-9a6e-859311eb63ed" />
+
+> <img width="1080" height="2344" alt="image" src="https://github.com/user-attachments/assets/abdbd057-9624-40df-9886-961e0a01df8a" />
 
 ### 🖥️ Tampilan 1 – Splash Screen
 
