@@ -3,10 +3,7 @@
 <p align="center">
   Centralized Podcast Studio Reservation & Monitoring 🎧
 </p>
-<p align="center">
-  <sub>Proyek Akhir Pemrograman Aplikasi Bergerak 2026</sub><br>
-  <sub>Mitra: Fakultas Ekonomi & Bisnis</sub>
-</p>
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/2d5aac2a-7e77-4dd8-b31c-6d1c3660627e" width="80%" />
 </p>
@@ -43,11 +40,15 @@
 ## Mitra
 Fakultas Ekonomi & Bisnis
 
+---
+
 ## Deskripsi Aplikasi
 
-Aplikasi ini merupakan pengembangan sistem **Reservasi dan Monitoring Studio Podcast FEB** yang sebelumnya masih dilakukan secara manual melalui WhatsApp tanpa pencatatan terpusat.
+Aplikasi Studio PodCast merupakan aplikasi mobile yang digunakan untuk melakukan reservasi dan monitoring penggunaan studio podcast secara digital. Melalui aplikasi ini, pengguna dapat mendaftar dan login sebagai mahasiswa atau admin, kemudian melakukan pemesanan studio, melihat jadwal, serta mengelola reservasi seperti mengubah atau membatalkan peminjaman.
 
-Pada proyek ini, aplikasi dikembangkan menggunakan **Flutter** dengan integrasi **Supabase** sebagai backend untuk autentikasi dan database.
+Admin memiliki akses untuk mengelola seluruh reservasi yang masuk, termasuk menyetujui atau menolak permintaan peminjaman, serta memantau status penggunaan studio. Selain itu, aplikasi ini juga menyediakan fitur riwayat peminjaman sehingga seluruh aktivitas penggunaan studio dapat tercatat dengan baik.
+
+---
 
 Aplikasi ini memungkinkan pengguna untuk:
 - Login dan register akun
@@ -58,20 +59,32 @@ Aplikasi ini memungkinkan pengguna untuk:
 
 ## Permasalahan
 
-- Proses peminjaman masih manual (WhatsApp)
-- Tidak ada database terpusat
-- Tidak ada sistem monitoring
-- Riwayat tidak tercatat
-- Bergantung pada satu admin
+Proses peminjaman Studio Podcast FEB saat ini masih dilakukan secara manual melalui chat WhatsApp tanpa adanya sistem yang terintegrasi. Hal ini menyebabkan proses pengelolaan menjadi kurang efisien dan tidak terstruktur. Selain itu, kondisi ini menimbulkan beberapa kendala seperti tidak adanya pencatatan data yang terpusat, ketergantungan pada satu pihak sebagai penanggung jawab, serta tidak tersedianya sistem monitoring yang jelas untuk mengetahui status penggunaan studio dan riwayat peminjaman.
+
+| No | Permasalahan                     | Penjelasan |
+|----|----------------------------------|-----------|
+| 1  | Proses Manual                    | Peminjaman masih dilakukan melalui WhatsApp |
+| 2  | Tidak Ada Database Terpusat      | Data peminjaman tidak tersimpan dalam sistem terintegrasi |
+| 3  | Bentrok Jadwal                  | Tidak ada sistem yang mengatur jadwal sehingga berpotensi terjadi tabrakan |
+| 4  | Tidak Ada Riwayat               | Riwayat penggunaan studio tidak tercatat |
+| 5  | Sulit Monitoring                | Tidak dapat memantau status studio secara jelas |
+
+---
 
 ## Solusi
 
-Mengembangkan aplikasi mobile berbasis Flutter dengan Supabase untuk:
-- Digitalisasi reservasi studio
-- Penyimpanan data terpusat
-- Sistem approval reservasi
-- Monitoring penggunaan
-- Riwayat peminjaman yang terstruktur
+Untuk mengatasi permasalahan tersebut, kami mengusulkan pembuatan aplikasi reservasi dan monitoring Studio Podcast FEB berbasis mobile. Aplikasi ini dirancang untuk mempermudah proses peminjaman, menyediakan pencatatan yang terpusat, serta memungkinkan monitoring penggunaan studio secara real-time.
+
+| No | Solusi                     | Deskripsi |
+|----|--------------------------|----------|
+| 1  | Digitalisasi Reservasi    | Mengubah proses peminjaman dari manual menjadi sistem digital berbasis aplikasi |
+| 2  | Database Terpusat         | Menyimpan seluruh data reservasi dalam satu sistem yang terintegrasi |
+| 3  | Sistem Approval           | Menyediakan fitur persetujuan reservasi oleh admin |
+| 4  | Monitoring Penggunaan     | Memungkinkan pemantauan status studio secara real-time |
+| 5  | Riwayat Terstruktur       | Menyediakan data histori peminjaman yang tersimpan dengan rapi |
+
+
+---
 
 ## Fitur Aplikasi
 
@@ -119,20 +132,25 @@ Mengubah data reservasi.
 ### Delete
 Menghapus atau membatalkan reservasi.
 
+--- 
+
 ## Integrasi Supabase
 
-Digunakan untuk:
-- Authentication (Login & Register)
-- Database (CRUD reservasi)
+Supabase digunakan sebagai backend dalam aplikasi ini untuk menangani proses autentikasi dan pengelolaan data. Fitur authentication dimanfaatkan untuk kebutuhan login dan register pengguna, sedangkan database digunakan untuk menyimpan serta mengelola data reservasi melalui operasi CRUD (Create, Read, Update, Delete).
 
-Contoh tabel:
-### reservasi
-- id
-- user_id
-- tanggal
-- waktu
-- status
-- keterangan
+
+### Contoh tabel 
+
+| Field       | Keterangan                |
+|-------------|--------------------------|
+| id          | ID reservasi             |
+| user_id     | ID pengguna              |
+| tanggal     | Tanggal peminjaman       |
+| waktu       | Waktu penggunaan         |
+| status      | Status reservasi         |
+| keterangan  | Catatan tambahan         |
+
+--- 
 
 ## Widget yang Digunakan
 
@@ -204,21 +222,21 @@ FutureBuilder(
 
 ## State Management
 
-Menggunakan:
+Aplikasi ini menggunakan metode setState untuk mengelola perubahan state pada widget. Metode ini digunakan untuk memperbarui tampilan secara langsung ketika terjadi perubahan data, seperti saat menampilkan hasil reservasi atau perubahan input dari pengguna.
 
-* setState
+### Navigasi dalam aplikasi menggunakan Navigator dari Flutter, yaitu:
 
-## Navigation
-
-* Navigator.push
-* Navigator.pushReplacement
+- Navigator.push → untuk berpindah ke halaman baru
+  
+- Navigator.pushReplacement → untuk mengganti halaman saat ini tanpa bisa kembali ke halaman sebelumnya
 
 ## Environment Configuration
 
-Menggunakan file `.env`:
+Aplikasi menggunakan file .env untuk menyimpan konfigurasi penting seperti API Key agar lebih aman dan tidak ditulis langsung di dalam kode.
 
-* SUPABASE_URL=your_url
-* SUPABASE_ANON_KEY=your_key
+- SUPABASE_URL=your_url
+
+- SUPABASE_ANON_KEY=your_key
 
 Menggunakan package:
 
