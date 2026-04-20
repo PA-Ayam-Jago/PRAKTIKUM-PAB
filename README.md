@@ -43,6 +43,7 @@ Mengembangkan aplikasi mobile berbasis Flutter dengan Supabase untuk:
 ## Fitur Aplikasi
 
 ### 1. Login Page
+
 Pengguna dapat login menggunakan email dan password yang terdaftar pada Supabase.
 
 ### 2. Register Page
