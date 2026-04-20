@@ -10,7 +10,7 @@
     <application
         android:label="studio_podcast_pab"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true"> <activity
             android:name=".MainActivity"
             android:exported="true"
