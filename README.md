@@ -39,7 +39,23 @@
 
 ## Mitra
 
-<h2 align="center">Mitra</h2> <p align="center"> Kolaborasi dalam pengelolaan dan operasional Studio Podcast </p> <p align="center"> ───────────── ───────────── </p> <p align="center"> <img src="LINK_LOGO_MITRA_KAMU_DI_SINI" width="40%" /> </p> <p align="center"> ───────────── ───────────── </p> <p align="center"> Fakultas Ekonomi & Bisnis <br> Sebagai pihak pengelola dan penyedia fasilitas Studio Podcast, <br> serta mendukung operasional dan implementasi sistem reservasi. </p>
+<h2 align="center">Mitra</h2>
+
+<p align="center">
+</p>
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0ed9cb08-139f-441f-a7e8-e1d64f682d7b" width="40%">
+</p>
+
+
+<p align="center">
+  <strong>Fakultas Ekonomi & Bisnis</strong><br><br>
+  Sebagai pengelola dan penyedia fasilitas Studio Podcast,<br>
+  serta mendukung operasional dan implementasi sistem reservasi.
+</p>
+
 
 ---
 
