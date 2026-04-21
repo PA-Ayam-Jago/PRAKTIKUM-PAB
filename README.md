@@ -287,7 +287,8 @@ Pada halaman profil, admin dapat melihat dan mengubah informasi akun seperti fot
 
 ### 1. Splash Screen
 
-> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/40cf07db-8641-478b-9bc1-198ab8159443" />
+> <img width="706" height="1516" alt="WhatsApp Image 2026-04-21 at 13 58 37" src="https://github.com/user-attachments/assets/4a2ce888-52bd-40db-8d9b-d74ddf4f3f5c" />
+
 
 Saat aplikasi dibuka, pengguna akan melihat halaman splash screen yang menampilkan logo sebagai identitas aplikasi dan memberikan kesan awal, kemudian setelah beberapa saat sistem akan secara otomatis mengarahkan pengguna ke halaman login untuk melanjutkan penggunaan aplikasi.
 
@@ -295,7 +296,8 @@ Saat aplikasi dibuka, pengguna akan melihat halaman splash screen yang menampilk
 
 ### 2. Login
 
-> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/4c664e46-3fdb-4885-8b75-46be6400e5c0" />
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/a446e305-745c-4985-b6f5-d2cbb323eeb4" />
+
 
 Setelah melewati splash screen, pengguna akan diarahkan ke halaman login untuk memasukkan email dan kata sandi yang sudah terdaftar, lalu menekan tombol masuk agar dapat mengakses fitur utama dalam aplikasi.
 
@@ -303,7 +305,7 @@ Setelah melewati splash screen, pengguna akan diarahkan ke halaman login untuk m
 
 ### 3. Register
 
-> <img width="706" height="1528" alt="image" src="https://github.com/user-attachments/assets/ff73b6ab-386d-4f50-8d81-ebdb7e7464b4" />
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/796f6c24-7b6b-4bad-bd51-258877c72e83" />
 
 Jika pengguna belum memiliki akun, pengguna dapat masuk ke halaman register dengan mengisi data seperti nama lengkap, email, kata sandi, dan konfirmasi kata sandi, kemudian menekan tombol daftar untuk membuat akun baru agar bisa login ke dalam aplikasi.
 
@@ -311,7 +313,8 @@ Jika pengguna belum memiliki akun, pengguna dapat masuk ke halaman register deng
 
 ### 4. Beranda User
 
-> <img width="706" height="1523" alt="image" src="https://github.com/user-attachments/assets/29a27fed-11fe-4dfc-812d-a47661b243f9" />
+> <img width="706" height="1528" alt="image" src="https://github.com/user-attachments/assets/c1122fa0-fe1a-4a69-80c4-6f5b6aa3cea0" />
+
 
 Setelah berhasil login, pengguna akan diarahkan ke halaman beranda yang menampilkan informasi akun serta menu utama, kemudian pengguna dapat memilih fitur seperti reservasi studio untuk melanjutkan proses penggunaan aplikasi.
 
