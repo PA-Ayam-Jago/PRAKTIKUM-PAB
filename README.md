@@ -37,7 +37,6 @@
 
 ---
 
-## Mitra
 
 <h2 align="center">Mitra</h2>
 
