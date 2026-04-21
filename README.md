@@ -200,6 +200,8 @@ FutureBuilder(
 )
 ```
 
+--- 
+
 ## State Management
 
 Aplikasi ini menggunakan metode **setState** untuk mengelola perubahan state pada widget. Metode ini digunakan untuk memperbarui tampilan secara langsung ketika terjadi perubahan data, seperti saat menampilkan hasil reservasi atau perubahan input dari pengguna.
