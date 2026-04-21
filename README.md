@@ -206,12 +206,12 @@ FutureBuilder(
 
 Aplikasi ini menggunakan metode **setState** untuk mengelola perubahan state pada widget. Metode ini digunakan untuk memperbarui tampilan secara langsung ketika terjadi perubahan data, seperti saat menampilkan hasil reservasi atau perubahan input dari pengguna.
 
-**🔀 Navigation**
+** 1. Navigation**
 
 - **Navigator.push** → untuk berpindah ke halaman baru  
 - **Navigator.pushReplacement** → untuk mengganti halaman saat ini tanpa bisa kembali  
 
-**🔐 Environment Configuration**
+** 2. Environment Configuration**
 
 Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API Key agar lebih aman. Menggunakan package **flutter_dotenv** untuk membaca file `.env`, sehingga API Key tidak ditulis langsung di dalam kode.
 
@@ -238,7 +238,7 @@ Aplikasi menggunakan file `.env` untuk menyimpan konfigurasi penting seperti API
 
 --- 
 
-## 👨‍💼 Menu Admin
+## Menu Admin
 
 ### 1. Login Admin
 
@@ -305,7 +305,7 @@ Pada halaman profil, admin dapat melihat dan mengubah informasi akun seperti fot
 
 ---
 
-## 👤 Menu User
+## Menu User
 
 ### 1. Splash Screen
 
