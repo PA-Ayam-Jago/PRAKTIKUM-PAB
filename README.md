@@ -26,14 +26,18 @@
 
 ---
 
-## Kelompok Ayam Jago
+<h2 align="center">Kelompok Ayam Jago</h2>
 
-| No | Nama                         | NIM        |
-|----|------------------------------|-----------|
-| 1  | IRVANI CANLUSTY MISSA        | 2409116019 |
-| 2  | DENY CANDRA KASUMA           | 2409116024 |
-| 3  | ZELSYA RIZQITA RAHMADHINI    | 2409116022 |
-| 4  | NURHIDAYAH                   | 2409116002 |
+<div align="center">
+
+| No | Nama                      | NIM        |
+|----|---------------------------|-----------|
+| 1  | IRVANI CANLUSTY MISSA     | 2409116019 |
+| 2  | DENY CANDRA KASUMA        | 2409116024 |
+| 3  | ZELSYA RIZQITA RAHMADHINI | 2409116022 |
+| 4  | NURHIDAYAH                | 2409116002 |
+
+</div>
 
 ---
 
