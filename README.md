@@ -38,7 +38,8 @@
 ---
 
 ## Mitra
-Fakultas Ekonomi & Bisnis
+
+<h2 align="center">Mitra</h2> <p align="center"> Kolaborasi dalam pengelolaan dan operasional Studio Podcast </p> <p align="center"> ───────────── ───────────── </p> <p align="center"> <img src="LINK_LOGO_MITRA_KAMU_DI_SINI" width="40%" /> </p> <p align="center"> ───────────── ───────────── </p> <p align="center"> Fakultas Ekonomi & Bisnis <br> Sebagai pihak pengelola dan penyedia fasilitas Studio Podcast, <br> serta mendukung operasional dan implementasi sistem reservasi. </p>
 
 ---
 
