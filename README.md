@@ -322,7 +322,8 @@ Setelah berhasil login, pengguna akan diarahkan ke halaman beranda yang menampil
 
 ### 5. Halaman Reservasi
 
-> <img width="1080" height="2338" alt="image" src="https://github.com/user-attachments/assets/968bc194-322f-4823-9eb8-92ee7ef44d9d" />
+> <img width="706" height="1523" alt="image" src="https://github.com/user-attachments/assets/7f8b43e5-2e5b-46eb-bcb3-0bd6e7def17d" />
+
 
 Saat pengguna masuk ke menu reservasi, sistem akan menampilkan halaman jadwal studio yang berisi daftar reservasi yang tersedia, kemudian pengguna dapat melihat, mencari, atau memfilter jadwal sesuai kebutuhan sebelum melakukan pemesanan.
 
@@ -330,7 +331,8 @@ Saat pengguna masuk ke menu reservasi, sistem akan menampilkan halaman jadwal st
 
 ### 6. Tambah Reservasi
 
-> <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/e1bc0c9d-6d57-4b82-a069-212dcaafb39b" />
+> <img width="1080" height="2338" alt="image" src="https://github.com/user-attachments/assets/ae46a008-2af8-4c44-a44a-e9f71e431f10" />
+
 
 Untuk membuat reservasi baru, pengguna dapat menekan tombol tambah pada halaman jadwal, lalu sistem akan menampilkan form pengajuan yang harus diisi seperti nama peminjam, nomor telepon, tanggal, jam mulai, jam selesai, dan deskripsi kegiatan sebelum data dikirim ke sistem.
 
@@ -338,7 +340,8 @@ Untuk membuat reservasi baru, pengguna dapat menekan tombol tambah pada halaman 
 
 ### 7. Validasi Data
 
-> <img width="1079" height="2339" alt="image" src="https://github.com/user-attachments/assets/e68a59f4-e36a-432a-8331-4c723543fae0" />
+> <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/c9551c8b-ce29-4f3b-b184-e40ff3118ee4" />
+
 
 Sebelum data reservasi dikirim, sistem akan melakukan validasi terhadap input yang dimasukkan oleh pengguna, seperti memastikan waktu mulai dan selesai sesuai, sehingga jika terdapat kesalahan maka pengguna harus memperbaikinya terlebih dahulu sebelum melanjutkan proses pengajuan.
 
@@ -346,7 +349,8 @@ Sebelum data reservasi dikirim, sistem akan melakukan validasi terhadap input ya
 
 ### 8. Status Pending
 
-> <img width="1080" height="2339" alt="image" src="https://github.com/user-attachments/assets/696f54e2-f7ae-4d61-a022-8aa05f814026" />
+> <img width="1079" height="2339" alt="image" src="https://github.com/user-attachments/assets/874f028f-0a54-42f2-87b9-9dc31b598fbd" />
+
 
 Setelah data reservasi berhasil dikirim, sistem akan menampilkan notifikasi bahwa pengajuan berhasil dan statusnya menjadi pending, kemudian data tersebut akan masuk ke daftar reservasi untuk menunggu persetujuan dari admin.
 
@@ -354,20 +358,19 @@ Setelah data reservasi berhasil dikirim, sistem akan menampilkan notifikasi bahw
 
 ### 9. Daftar Reservasi
 
-> <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/517695cc-01e9-4732-92b1-b0bbbfee273e" />
 
-Pada halaman reservasi, pengguna dapat melihat daftar pengajuan yang telah dibuat beserta statusnya seperti pending, approved, atau selesai, kemudian pengguna juga dapat mengedit atau menghapus reservasi jika diperlukan melalui fitur yang tersedia.
+> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/009242ec-de72-4c0f-a7cd-f9b41a5a79b3" />
+
+
+Fitur pencarian pada halaman Jadwal Studio digunakan untuk mencari jadwal berdasarkan tanggal, hari, atau bulan. Saat pengguna memasukkan kata kunci, aplikasi akan memfilter dan menampilkan jadwal yang sesuai. Jika tidak ada data yang cocok, maka hasil tidak ditampilkan.
 
 ---
 
 ### 10. Profil User
 
-> <img width="1080" height="2343" alt="image" src="https://github.com/user-attachments/assets/2fcd7566-f483-4d61-9a6e-859311eb63ed" />
+> <img width="1080" height="2336" alt="image" src="https://github.com/user-attachments/assets/e57c9894-2eb2-46c3-b15b-71d85facf9d5" />
 
-Pada halaman profil, pengguna dapat melihat dan mengubah data pribadi seperti foto, nama, email, dan deskripsi, kemudian menyimpan perubahan, serta dapat melakukan logout untuk keluar dari aplikasi dan kembali ke halaman login.
+Pada halaman profil, pengguna dapat melihat dan mengubah data seperti foto, nama, email, dan deskripsi, lalu menyimpan perubahan. Pengguna juga dapat logout untuk keluar dari akun dan kembali ke halaman login.
 
-> <img width="1080" height="2344" alt="image" src="https://github.com/user-attachments/assets/abdbd057-9624-40df-9886-961e0a01df8a" />
-
-Saat pengguna memilih fitur logout, sistem akan menampilkan konfirmasi terlebih dahulu, kemudian jika disetujui, pengguna akan keluar dari aplikasi dan diarahkan kembali ke halaman login.
 
 --- 
