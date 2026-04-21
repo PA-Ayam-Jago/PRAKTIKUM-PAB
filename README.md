@@ -1,7 +1,7 @@
 <h1 align="center">🎙️ Studio PodCast</h1>
 
 <p align="center">
-  Centralized Podcast Studio Reservation & Monitoring 🎧
+  Centralized Podcast Studio Reservation & Monitoring 
 </p>
 
 <p align="center">
