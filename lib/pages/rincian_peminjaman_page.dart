@@ -56,6 +56,22 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     });
   }
 
+  String _getUsageStatus(String dateStr) {
+    try {
+      DateTime reservationDate = DateTime.parse(dateStr);
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+
+      if (reservationDate.isBefore(today)) {
+        return "SUDAH SELESAI";
+      } else {
+        return "BELUM DIPAKAI";
+      }
+    } catch (e) {
+      return "BELUM DIPAKAI";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const Color primaryGold = Color(0xFFD4AF37);
@@ -118,12 +134,12 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
             alignment: Alignment.centerLeft,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.only(left: 20, bottom: 15),
               child: Row(
-                children: ["Semua", "Pending", "Approved", "Rejected"].map((
+                children: ["SEMUA", "PENDING", "APPROVED", "REJECTED"].map((
                   status,
                 ) {
-                  final isSelected = selectedStatus == status;
+                  final isSelected = selectedStatus.toUpperCase() == status;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
@@ -132,7 +148,9 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                       onSelected: (selected) {
                         if (selected) {
                           setState(() {
-                            selectedStatus = status;
+                            selectedStatus = status == "SEMUA"
+                                ? "Semua"
+                                : status;
                             _applyFilter();
                           });
                         }
@@ -140,16 +158,16 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                       selectedColor: primaryGold,
                       backgroundColor: surfaceDark,
                       labelStyle: TextStyle(
-                        color: isSelected ? Colors.black : Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.black : Colors.white60,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(8),
                         side: BorderSide(
                           color: isSelected
                               ? primaryGold
-                              : Colors.white.withOpacity(0.1),
+                              : Colors.white.withOpacity(0.05),
                         ),
                       ),
                       showCheckmark: false,
@@ -159,8 +177,6 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
               ),
             ),
           ),
-
-          const SizedBox(height: 10),
 
           Expanded(
             child: isLoading
@@ -180,6 +196,8 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                     itemCount: filteredData.length,
                     itemBuilder: (context, index) {
                       final item = filteredData[index];
+                      final usageStatus = _getUsageStatus(item.tanggal);
+
                       return Container(
                         margin: const EdgeInsets.only(bottom: 15),
                         padding: const EdgeInsets.all(20),
@@ -202,17 +220,36 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 18,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                _buildStatusBadge(item.status),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    _buildStatusBadge(item.status),
+                                    const SizedBox(height: 5),
+                                    _buildUsageBadge(usageStatus),
+                                  ],
+                                ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 15),
 
-                            _buildInfoRow(Icons.calendar_today, item.tanggal),
+                            Row(
+                              children: [
+                                _buildInfoRow(
+                                  Icons.calendar_today,
+                                  item.tanggal,
+                                ),
+                                const SizedBox(width: 15),
+                                _buildInfoRow(
+                                  Icons.access_time_rounded,
+                                  "13:00 - 15:00",
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 8),
 
                             _buildInfoRow(
@@ -221,7 +258,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                             ),
 
                             const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 15),
                               child: Divider(color: Colors.white10, height: 1),
                             ),
 
@@ -234,7 +271,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
                                 letterSpacing: 1.2,
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 8),
                             Text(
                               item.deskripsi.isNotEmpty
                                   ? item.deskripsi
@@ -283,6 +320,24 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
         style: TextStyle(
           color: color,
           fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUsageBadge(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.4),
+          fontSize: 8,
           fontWeight: FontWeight.bold,
         ),
       ),

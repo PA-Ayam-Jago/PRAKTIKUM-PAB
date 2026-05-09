@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/supabase_service.dart';
 import 'reservasi_page.dart';
 import 'admin_page.dart';
@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   String? role;
   String? email;
   String? name;
+  String? profileImageUrl;
   bool isLoading = true;
   int totalReservasiBulanIni = 0;
 
@@ -33,6 +34,16 @@ class _HomePageState extends State<HomePage> {
     _fetchUserData();
   }
 
+  // PERBAIKAN: Menampilkan rute dari lokasi user ke FEB Unmul
+  Future<void> _openGoogleMaps() async {
+    const String googleMapsUrl =
+        "https://www.google.com/maps/dir/?api=1&destination=FEB+Universitas+Mulawarman&origin=My+Location";
+    final Uri url = Uri.parse(googleMapsUrl);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   Future<void> _fetchUserData() async {
     if (!mounted) return;
     setState(() => isLoading = true);
@@ -44,22 +55,27 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           email = user?.email;
-          name = (profile != null && profile['name'] != null)
-              ? profile['name']
-              : (user?.userMetadata?['full_name'] ?? "Mahasiswa");
+          name = profile?['name'] ?? user?.userMetadata?['full_name'] ?? "User";
+
+          final String? rawUrl = profile?['avatar_url'];
+
+          if (rawUrl != null && rawUrl.trim().isNotEmpty) {
+            profileImageUrl =
+                "$rawUrl?t=${DateTime.now().millisecondsSinceEpoch}";
+          } else {
+            profileImageUrl = null;
+          }
 
           role = profile != null
               ? profile['role'].toString().toLowerCase().trim()
               : 'mahasiswa';
         });
 
-        if (role == 'admin') {
-          await _fetchAdminStats();
-        }
-
-        setState(() => isLoading = false);
+        if (role == 'admin') await _fetchAdminStats();
+        if (mounted) setState(() => isLoading = false);
       }
     } catch (e) {
+      debugPrint("Error fetching user data: $e");
       if (mounted) setState(() => isLoading = false);
     }
   }
@@ -92,7 +108,6 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // --- BAGIAN STATIS (TIDAK IKUT SCROLL) ---
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Column(
@@ -109,7 +124,6 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-
                       Expanded(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
@@ -180,38 +194,71 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: primaryGold.withOpacity(0.5)),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.auto_awesome, color: primaryGold, size: 12),
-                SizedBox(width: 8),
-                Text(
-                  "FEB UNMUL",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: primaryGold.withOpacity(0.5)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.auto_awesome, color: primaryGold, size: 12),
+                    SizedBox(width: 8),
+                    Text(
+                      "FEB UNMUL",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              InkWell(
+                onTap: _openGoogleMaps,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_rounded,
+                        color: primaryGold,
+                        size: 14,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        "Cek Lokasi Studio",
+                        style: TextStyle(color: Colors.white70, fontSize: 10),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           Row(
             children: [
               IconButton(
                 onPressed: _fetchUserData,
-                icon: const Icon(
-                  Icons.refresh_rounded,
-                  color: Colors.white70,
-                  size: 22,
-                ),
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
               ),
               const SizedBox(width: 8),
               GestureDetector(
@@ -231,10 +278,13 @@ class _HomePageState extends State<HomePage> {
                   child: CircleAvatar(
                     radius: 16,
                     backgroundColor: surfaceDark,
+                    foregroundImage: (profileImageUrl != null)
+                        ? NetworkImage(profileImageUrl!)
+                        : null,
                     child: Text(
                       name != null && name!.isNotEmpty
                           ? name![0].toUpperCase()
-                          : "M",
+                          : "U",
                       style: const TextStyle(
                         color: primaryGold,
                         fontSize: 12,
@@ -277,7 +327,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             fontSize: 42,
             fontWeight: FontWeight.w200,
-            height: 0,
+            height: 1.1,
           ),
         ),
         const Text(
@@ -286,7 +336,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             fontSize: 42,
             fontWeight: FontWeight.w900,
-            height: 0,
+            height: 1.1,
           ),
         ),
       ],
@@ -308,16 +358,28 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                width: 55,
+                height: 55,
                 decoration: BoxDecoration(
-                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(15),
+                  color: Colors.black54,
+                  image: profileImageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(profileImageUrl!),
+                          fit: BoxFit.cover,
+                          onError: (_, __) {
+                            setState(() => profileImageUrl = null);
+                          },
+                        )
+                      : null,
                 ),
-                child: const Icon(
-                  Icons.mic_none_rounded,
-                  color: primaryGold,
-                  size: 28,
-                ),
+                child: profileImageUrl == null
+                    ? const Icon(
+                        Icons.mic_none_rounded,
+                        color: primaryGold,
+                        size: 28,
+                      )
+                    : null,
               ),
               const SizedBox(width: 20),
               Expanded(

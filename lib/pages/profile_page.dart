@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shake/shake.dart';
 import '../services/supabase_service.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -22,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _selectedFileBytes;
   String? _selectedFileExt;
 
+  ShakeDetector? _shakeDetector;
+
   static const Color primaryGold = Color(0xFFD4AF37);
   static const Color bgDark = Color(0xFF0D0D0D);
   static const Color surfaceDark = Color(0xFF1A1A1A);
@@ -31,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _loadProfileData();
+    _initShakeSensor();
   }
 
   @override
@@ -38,7 +42,59 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameController.dispose();
     _deskripsiController.dispose();
     _emailController.dispose();
+    _shakeDetector?.stopListening();
     super.dispose();
+  }
+
+  void _initShakeSensor() {
+    _shakeDetector = ShakeDetector.autoStart(
+      onPhoneShake: () {
+        if (_selectedFileBytes != null ||
+            (_avatarUrl != null && _avatarUrl!.isNotEmpty)) {
+          _confirmClearPhoto();
+        }
+      },
+      shakeThresholdGravity: 2.7,
+    );
+  }
+
+  void _confirmClearPhoto() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: surfaceDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: const Text(
+          "Hapus Foto? 🗑️",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        content: const Text(
+          "Guncangan terdeteksi. Ingin menghapus atau reset foto profil ini?",
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("BATAL", style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _selectedFileBytes = null;
+                _selectedFileExt = null;
+                _avatarUrl = null;
+              });
+              Navigator.pop(context);
+              _showSnackBar("Foto profil direset", isError: false);
+            },
+            child: const Text(
+              "HAPUS",
+              style: TextStyle(color: errorRed, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadProfileData() async {
@@ -64,10 +120,10 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       imageQuality: 50,
     );
 
@@ -80,6 +136,101 @@ class _ProfilePageState extends State<ProfilePage> {
       _selectedFileBytes = bytes;
       _selectedFileExt = extension;
     });
+  }
+
+  void _showImageSourcePicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent, // Agar border radius terlihat
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: surfaceDark,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          border: Border(top: BorderSide(color: primaryGold, width: 0.5)),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "PILIH SUMBER FOTO",
+              style: TextStyle(
+                color: primaryGold,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2.0,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildSourceItem(
+                  icon: Icons.camera_enhance_rounded,
+                  label: "Kamera",
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                _buildSourceItem(
+                  icon: Icons.photo_library_rounded,
+                  label: "Galeri",
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSourceItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white10),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: primaryGold, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _updateProfile() async {
@@ -146,17 +297,12 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: () async {
                 final navigator = Navigator.of(context);
-
                 try {
                   Navigator.pop(dialogContext);
-
                   await _apiService.signOut();
-
                   navigator.pushNamedAndRemoveUntil('/login', (route) => false);
                 } catch (e) {
-                  if (mounted) {
-                    _showSnackBar("Gagal logout: $e", isError: true);
-                  }
+                  if (mounted) _showSnackBar("Gagal logout: $e", isError: true);
                 }
               },
               child: const Text(
@@ -214,7 +360,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const SizedBox(height: 20),
                   _buildAvatarPreview(),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Goncang ponsel untuk hapus foto",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.3),
+                      fontSize: 10,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                   _buildTextField(
                     "NAMA LENGKAP",
                     _nameController,
@@ -262,6 +417,13 @@ class _ProfilePageState extends State<ProfilePage> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: primaryGold, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryGold.withOpacity(0.15),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
             child: CircleAvatar(
               backgroundColor: surfaceDark,
@@ -275,15 +437,16 @@ class _ProfilePageState extends State<ProfilePage> {
             bottom: 0,
             right: 0,
             child: GestureDetector(
-              onTap: _pickImage,
+              onTap: _showImageSourcePicker,
               child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
                   color: primaryGold,
                   shape: BoxShape.circle,
+                  border: Border.all(color: bgDark, width: 3),
                 ),
                 child: const Icon(
-                  Icons.camera_alt,
+                  Icons.camera_alt_rounded,
                   size: 18,
                   color: Colors.black,
                 ),
@@ -311,6 +474,7 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Colors.grey,
             fontSize: 10,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
           ),
         ),
         const SizedBox(height: 8),
@@ -328,16 +492,16 @@ class _ProfilePageState extends State<ProfilePage> {
             fillColor: surfaceDark,
             prefixIcon: Icon(icon, color: primaryGold, size: 20),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.white10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: primaryGold),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: primaryGold, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 12,
+              vertical: 18,
+              horizontal: 16,
             ),
           ),
         ),
@@ -348,18 +512,24 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildSaveButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 55,
       child: ElevatedButton(
         onPressed: _updateProfile,
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryGold,
+          elevation: 4,
+          shadowColor: primaryGold.withOpacity(0.3),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         child: const Text(
           "SIMPAN PERUBAHAN",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.1,
+          ),
         ),
       ),
     );
@@ -368,21 +538,32 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 55,
       child: OutlinedButton(
         onPressed: _confirmLogout,
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: Colors.white12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.logout, size: 18, color: errorRed),
-            SizedBox(width: 8),
-            Text("KELUAR DARI AKUN", style: TextStyle(color: errorRed)),
+            Icon(
+              Icons.logout_rounded,
+              size: 18,
+              color: errorRed.withOpacity(0.8),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              "KELUAR DARI AKUN",
+              style: TextStyle(
+                color: errorRed,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
           ],
         ),
       ),

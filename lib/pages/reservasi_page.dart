@@ -36,7 +36,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
   static const Color primaryGold = Color(0xFFD4AF37);
   static const Color bgDark = Color(0xFF0A0A0A);
   static const Color surfaceDark = Color(0xFF161616);
-  static const Color inputFill = Color(0xFF1E1E1E);
+  static const Color errorRed = Color(0xFFE57373);
 
   @override
   void dispose() {
@@ -97,7 +97,6 @@ class _ReservasiPageState extends State<ReservasiPage> {
     if (status != 'approved') return const SizedBox.shrink();
 
     final now = DateTime.now();
-
     final startDT = DateTime.parse("$tanggal $mulai:00");
     final endDT = DateTime.parse("$tanggal $selesai:00");
 
@@ -161,17 +160,61 @@ class _ReservasiPageState extends State<ReservasiPage> {
     return false;
   }
 
+  // LOGIKA BARU: Cek apakah user sudah punya reservasi di hari tersebut
+  Future<bool> _hasExistingReservationToday(
+    String userId,
+    String tanggal,
+    String? currentId,
+  ) async {
+    final response = await supabase
+        .from('reservations')
+        .select()
+        .eq('user_id', userId)
+        .eq('tanggal', tanggal)
+        .neq(
+          'status',
+          'rejected',
+        ); // Kecuali yang ditolak, semua status dihitung (pending/approved)
+
+    if (response.isEmpty) return false;
+
+    // Jika sedang edit, pastikan tidak menghitung dirinya sendiri
+    if (currentId != null) {
+      final otherReservations = response
+          .where((res) => res['id'].toString() != currentId)
+          .toList();
+      return otherReservations.isNotEmpty;
+    }
+
+    return true;
+  }
+
   Future<void> _simpanReservasi({
     String? editId,
     required String userId,
     required BuildContext modalCtx,
   }) async {
     if (!_formKey.currentState!.validate()) return;
+
     final startParts = _mulaiController.text.split(':');
     final endParts = _selesaiController.text.split(':');
-    final startMinutes =
-        int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
-    final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+    final startHour = int.parse(startParts[0]);
+    final endHour = int.parse(endParts[0]);
+
+    final startMinutes = startHour * 60 + int.parse(startParts[1]);
+    final endMinutes = endHour * 60 + int.parse(endParts[1]);
+
+    if (startHour < 8 ||
+        (endHour >= 17 && int.parse(endParts[1]) > 0) ||
+        endHour > 17) {
+      _showTopNotification(
+        context,
+        "Di luar jam operasional (08:00 - 17:00)",
+        false,
+      );
+      return;
+    }
 
     if (endMinutes <= startMinutes) {
       _showTopNotification(
@@ -182,8 +225,32 @@ class _ReservasiPageState extends State<ReservasiPage> {
       return;
     }
 
+    if ((endMinutes - startMinutes) < 60) {
+      _showTopNotification(
+        context,
+        "Durasi minimal peminjaman adalah 1 jam",
+        false,
+      );
+      return;
+    }
+
     setState(() => _isProcessing = true);
     try {
+      // Validasi 1 Kali Sehari
+      bool alreadyReserved = await _hasExistingReservationToday(
+        userId,
+        _tanggalController.text,
+        editId,
+      );
+      if (alreadyReserved) {
+        _showTopNotification(
+          context,
+          "Batas reservasi hanya 1 kali per hari",
+          false,
+        );
+        return;
+      }
+
       bool isOverlap = await _isTimeSlotOverlap(
         _tanggalController.text,
         _mulaiController.text,
@@ -409,16 +476,13 @@ class _ReservasiPageState extends State<ReservasiPage> {
           .stream(primaryKey: ['id'])
           .order('tanggal', ascending: _isAscending),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData)
           return const Center(
             child: CircularProgressIndicator(color: primaryGold),
           );
-        }
 
         final list = snapshot.data!.where((i) {
           final query = _searchQuery.toLowerCase();
-
-          // Logika Pencarian Diperluas: Cek Deskripsi, Nama, dan Tanggal
           final deskripsi = (i['deskripsi'] ?? "").toString().toLowerCase();
           final fullName = (i['full_name'] ?? "").toString().toLowerCase();
           final tanggalRaw = (i['tanggal'] ?? "").toString();
@@ -445,14 +509,13 @@ class _ReservasiPageState extends State<ReservasiPage> {
           }
         }).toList();
 
-        if (list.isEmpty) {
+        if (list.isEmpty)
           return Center(
             child: Text(
               "Jadwal tidak ditemukan",
               style: TextStyle(color: Colors.white.withOpacity(0.2)),
             ),
           );
-        }
         return ListView.builder(
           padding: const EdgeInsets.fromLTRB(24, 10, 24, 100),
           itemCount: list.length,
@@ -660,46 +723,91 @@ class _ReservasiPageState extends State<ReservasiPage> {
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "AJUKAN JADWAL",
-                    style: TextStyle(
-                      color: primaryGold,
-                      fontWeight: FontWeight.bold,
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  _buildValidatedField(
+                  const Center(
+                    child: Text(
+                      "Buat Jadwal Baru",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Center(
+                    child: Text(
+                      "Lengkapi data untuk memesan studio",
+                      style: TextStyle(color: Colors.white38, fontSize: 13),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  _buildInputLabel("NAMA LENGKAP"),
+                  _buildRegisterStyleField(
                     _namaController,
-                    Icons.person,
-                    "Nama Lengkap",
-                    validator: (v) =>
-                        v == null || v.isEmpty ? "Nama wajib diisi" : null,
+                    Icons.person_outline,
+                    "Contoh: Budi Santoso",
+                    validator: (v) {
+                      if (v == null || v.isEmpty)
+                        return "Nama tidak boleh kosong";
+                      if (v.length < 3) return "Nama terlalu pendek";
+                      if (RegExp(r'[0-9]').hasMatch(v))
+                        return "Nama tidak boleh mengandung angka";
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 12),
-                  _buildValidatedField(
+                  const SizedBox(height: 16),
+
+                  _buildInputLabel("NOMOR WHATSAPP"),
+                  _buildRegisterStyleField(
                     _phoneController,
-                    Icons.phone,
-                    "WhatsApp",
+                    Icons.phone_iphone_rounded,
+                    "Contoh: 08123456789",
                     keyboardType: TextInputType.phone,
-                    validator: (v) => v == null || v.length < 10
-                        ? "Nomor WA tidak valid"
-                        : null,
+                    validator: (v) {
+                      if (v == null || v.isEmpty)
+                        return "Nomor WA tidak boleh kosong";
+                      if (!RegExp(r'^(08|628)[0-9]{8,11}$').hasMatch(v))
+                        return "Format nomor tidak valid";
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 12),
-                  _buildValidatedField(
+                  const SizedBox(height: 16),
+
+                  _buildInputLabel("TANGGAL PINJAM"),
+                  _buildRegisterStyleField(
                     _tanggalController,
-                    Icons.calendar_today,
-                    "Tanggal",
+                    Icons.calendar_month_outlined,
+                    "Pilih Tanggal",
                     readOnly: true,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? "Pilih tanggal" : null,
                     onTap: () async {
                       DateTime? d = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime.now(),
                         lastDate: DateTime(2030),
+                        builder: (context, child) => Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: const ColorScheme.dark(
+                              primary: primaryGold,
+                              onPrimary: Colors.black,
+                              surface: surfaceDark,
+                            ),
+                          ),
+                          child: child!,
+                        ),
                       );
                       if (d != null)
                         setST(
@@ -708,74 +816,104 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           ).format(d),
                         );
                     },
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Tanggal wajib dipilih" : null,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
+
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: _buildValidatedField(
-                          _mulaiController,
-                          Icons.timer,
-                          "Mulai",
-                          readOnly: true,
-                          validator: (v) =>
-                              v == null || v.isEmpty ? "Mulai" : null,
-                          onTap: () async {
-                            TimeOfDay? t = await showTimePicker(
-                              context: context,
-                              initialTime: const TimeOfDay(hour: 8, minute: 0),
-                            );
-                            if (t != null)
-                              setST(
-                                () => _mulaiController.text =
-                                    "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
-                              );
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInputLabel("MULAI"),
+                            _buildRegisterStyleField(
+                              _mulaiController,
+                              Icons.access_time_rounded,
+                              "08:00",
+                              readOnly: true,
+                              onTap: () async {
+                                TimeOfDay? t = await showTimePicker(
+                                  context: context,
+                                  initialTime: const TimeOfDay(
+                                    hour: 8,
+                                    minute: 0,
+                                  ),
+                                );
+                                if (t != null)
+                                  setST(
+                                    () => _mulaiController.text =
+                                        "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
+                                  );
+                              },
+                              validator: (v) =>
+                                  v == null || v.isEmpty ? "Mulai?" : null,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 15),
                       Expanded(
-                        child: _buildValidatedField(
-                          _selesaiController,
-                          Icons.timer_off,
-                          "Selesai",
-                          readOnly: true,
-                          validator: (v) =>
-                              v == null || v.isEmpty ? "Selesai" : null,
-                          onTap: () async {
-                            TimeOfDay? t = await showTimePicker(
-                              context: context,
-                              initialTime: const TimeOfDay(hour: 10, minute: 0),
-                            );
-                            if (t != null)
-                              setST(
-                                () => _selesaiController.text =
-                                    "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
-                              );
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInputLabel("SELESAI"),
+                            _buildRegisterStyleField(
+                              _selesaiController,
+                              Icons.update_rounded,
+                              "10:00",
+                              readOnly: true,
+                              onTap: () async {
+                                TimeOfDay? t = await showTimePicker(
+                                  context: context,
+                                  initialTime: const TimeOfDay(
+                                    hour: 10,
+                                    minute: 0,
+                                  ),
+                                );
+                                if (t != null)
+                                  setST(
+                                    () => _selesaiController.text =
+                                        "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
+                                  );
+                              },
+                              validator: (v) =>
+                                  v == null || v.isEmpty ? "Selesai?" : null,
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  _buildValidatedField(
+                  const SizedBox(height: 16),
+
+                  _buildInputLabel("KETERANGAN KEPERLUAN"),
+                  _buildRegisterStyleField(
                     _deskripsiController,
-                    Icons.description,
-                    "Keterangan",
+                    Icons.notes_rounded,
+                    "Contoh: Latihan Band Persiapan Dies Natalis",
                     isLong: true,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? "Berikan keterangan" : null,
+                    validator: (v) {
+                      if (v == null || v.isEmpty)
+                        return "Keterangan tidak boleh kosong";
+                      if (v.length < 10)
+                        return "Berikan detail minimal 10 karakter";
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 25),
+
+                  const SizedBox(height: 40),
+
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryGold,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: _isProcessing
@@ -788,12 +926,35 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       child: _isProcessing
                           ? const CircularProgressIndicator(color: Colors.black)
                           : const Text(
-                              "KONFIRMASI",
+                              "DAFTAR SEKARANG",
                               style: TextStyle(
                                 color: Colors.black,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
+                            ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(modalCtx),
+                      child: RichText(
+                        text: const TextSpan(
+                          text: "ingin membatalkan? ",
+                          style: TextStyle(color: Colors.white38, fontSize: 13),
+                          children: [
+                            TextSpan(
+                              text: "Kembali",
+                              style: TextStyle(
+                                color: primaryGold,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -805,10 +966,25 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
-  Widget _buildValidatedField(
+  Widget _buildInputLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: primaryGold,
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegisterStyleField(
     TextEditingController c,
-    IconData i,
-    String h, {
+    IconData icon,
+    String hint, {
     VoidCallback? onTap,
     bool isLong = false,
     bool readOnly = false,
@@ -817,30 +993,42 @@ class _ReservasiPageState extends State<ReservasiPage> {
   }) {
     return TextFormField(
       controller: c,
-      readOnly: readOnly,
       onTap: onTap,
+      readOnly: readOnly,
       validator: validator,
       keyboardType: keyboardType,
       maxLines: isLong ? 3 : 1,
       style: const TextStyle(color: Colors.white, fontSize: 14),
       decoration: InputDecoration(
-        hintText: h,
-        hintStyle: const TextStyle(color: Colors.white10),
-        prefixIcon: Icon(i, color: primaryGold, size: 20),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+        prefixIcon: Icon(icon, color: Colors.white60, size: 20),
         filled: true,
-        fillColor: inputFill,
-        errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 11),
+        fillColor: const Color(0xFF1E1E1E),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 18,
+          horizontal: 16,
+        ),
+        errorStyle: const TextStyle(color: errorRed, fontSize: 11),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: primaryGold, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primaryGold, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: errorRed, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: errorRed, width: 1.5),
         ),
       ),
     );

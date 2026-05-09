@@ -17,11 +17,11 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? '',
-      email: json['email'] ?? '',
+      id: json['id']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
       name: json['name'] ?? json['full_name'] ?? 'User',
-      phone: json['phone'] ?? '',
-      role: json['role'] ?? 'mahasiswa',
+      phone: json['phone']?.toString() ?? '',
+      role: json['role']?.toString() ?? 'mahasiswa',
       avatarUrl: json['avatar_url'],
     );
   }
@@ -29,6 +29,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'email': email,
       'name': name,
       'phone': phone,
       'role': role,
@@ -36,5 +37,6 @@ class UserModel {
     };
   }
 
+  // Helper untuk pengecekan role yang lebih aman
   bool get isAdmin => role.toLowerCase() == 'admin';
 }

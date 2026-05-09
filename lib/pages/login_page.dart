@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart'; // Import library biometrik
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
 import 'register_page.dart';
@@ -18,14 +19,17 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _apiService = SupabaseService();
 
+  // Inisialisasi Local Auth
+  final LocalAuthentication auth = LocalAuthentication();
+
   bool _isLoading = false;
   bool _obscurePassword = true;
 
   final Color primaryGold = const Color(0xFFD4AF37);
   final Color bgDark = const Color(0xFF0A0A0A);
   final Color surfaceDark = const Color(0xFF161616);
+  final Color errorRed = const Color(0xFFCF6679);
 
-  // FUNGSI ANIMASI BLUR TRANSITION
   Route _createBlurRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -45,7 +49,39 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // LOGIKA: Autentikasi Biometrik
+  Future<void> _handleBiometricAuth() async {
+    try {
+      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+
+      if (!canAuthenticate) {
+        _showSnackBar("Perangkat tidak mendukung biometrik", isError: true);
+        return;
+      }
+
+      final bool didAuthenticate = await auth.authenticate(
+        localizedReason: 'Silakan pindai sidik jari Anda untuk masuk',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+
+      if (didAuthenticate) {
+        if (mounted) {
+          _showSnackBar("Login Berhasil via Biometrik!");
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
+      }
+    } on PlatformException catch (e) {
+      _showSnackBar("Gagal memproses sidik jari: ${e.message}", isError: true);
+    }
+  }
+
   Future<void> _handleLogin() async {
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
@@ -113,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
         backgroundColor: isError
-            ? Colors.redAccent.withOpacity(0.9)
+            ? errorRed.withOpacity(0.9)
             : Colors.green.withOpacity(0.9),
         behavior: SnackBarBehavior.floating,
         elevation: 6,
@@ -143,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgDark,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Positioned.fill(
@@ -175,7 +211,10 @@ class _LoginPageState extends State<LoginPage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 20,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -192,8 +231,9 @@ class _LoginPageState extends State<LoginPage> {
                         hint: "Masukkan email anda",
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
                         validator: (value) {
-                          if (value == null || value.isEmpty)
+                          if (value == null || value.trim().isEmpty)
                             return "Email tidak boleh kosong";
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
@@ -210,6 +250,8 @@ class _LoginPageState extends State<LoginPage> {
                         hint: "Masukkan kata sandi",
                         icon: Icons.lock_outline_rounded,
                         isPassword: true,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _handleLogin(),
                         validator: (value) {
                           if (value == null || value.isEmpty)
                             return "Kata sandi tidak boleh kosong";
@@ -219,7 +261,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       const SizedBox(height: 35),
-                      _buildCompactButton(),
+                      _buildActionButtonsRow(), // VERSI PERSEGI SELARAS
                       const SizedBox(height: 25),
                       _buildFooterLink(),
                     ],
@@ -238,13 +280,13 @@ class _LoginPageState extends State<LoginPage> {
       width: 150,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -306,6 +348,8 @@ class _LoginPageState extends State<LoginPage> {
     required IconData icon,
     bool isPassword = false,
     TextInputType? keyboardType,
+    TextInputAction? textInputAction,
+    Function(String)? onFieldSubmitted,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -326,6 +370,9 @@ class _LoginPageState extends State<LoginPage> {
           controller: controller,
           obscureText: isPassword && _obscurePassword,
           validator: validator,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
           style: const TextStyle(color: Colors.white, fontSize: 14),
           decoration: InputDecoration(
             hintText: hint,
@@ -350,42 +397,97 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: errorRed.withOpacity(0.5),
+                width: 1,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: errorRed, width: 1.5),
+            ),
+            errorStyle: TextStyle(color: errorRed, fontSize: 11),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildCompactButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryGold,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        onPressed: _isLoading ? null : _handleLogin,
-        child: _isLoading
-            ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.black,
-                  strokeWidth: 2,
-                ),
-              )
-            : const Text(
-                "MASUK SEKARANG",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
+  // WIDGET DIPERBAIK: Tombol Sidik Jari berbentuk Persegi (Rounded) agar selaras
+  Widget _buildActionButtonsRow() {
+    const double targetHeight = 54.0;
+
+    return Row(
+      children: [
+        // Tombol Login Manual
+        Expanded(
+          flex: 4,
+          child: SizedBox(
+            height: targetHeight,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGold,
+                foregroundColor: Colors.black,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ), // Selaras dengan input
                 ),
               ),
-      ),
+              onPressed: _isLoading ? null : _handleLogin,
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      "MASUK SEKARANG",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Tombol Sensor Sidik Jari (Persegi Rounded agar rapi & profesional)
+        GestureDetector(
+          onTap: _isLoading ? null : _handleBiometricAuth,
+          child: Container(
+            width: targetHeight,
+            height: targetHeight,
+            decoration: BoxDecoration(
+              color: surfaceDark,
+              borderRadius: BorderRadius.circular(
+                12,
+              ), // Mengubah Lingkaran menjadi Persegi Rounded
+              border: Border.all(color: primaryGold, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryGold.withOpacity(0.2),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.fingerprint_rounded,
+              color: primaryGold,
+              size: 32,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -398,10 +500,8 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.grey[400], fontSize: 14),
         ),
         GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            _createBlurRoute(const RegisterPage()), // TRANSISI BLUR KE REGISTER
-          ),
+          onTap: () =>
+              Navigator.push(context, _createBlurRoute(const RegisterPage())),
           child: Text(
             "Daftar",
             style: TextStyle(

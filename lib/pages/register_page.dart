@@ -1,8 +1,8 @@
 import 'dart:ui';
-import 'login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
+import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -12,20 +12,22 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final SupabaseService _apiService = SupabaseService();
   final _formKey = GlobalKey<FormState>();
-
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _apiService = SupabaseService();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
 
+  // Sync warna dengan LoginPage
   final Color primaryGold = const Color(0xFFD4AF37);
   final Color bgDark = const Color(0xFF0A0A0A);
   final Color surfaceDark = const Color(0xFF161616);
+  final Color errorRed = const Color(0xFFCF6679);
 
   Route _createBlurRoute(Widget page) {
     return PageRouteBuilder(
@@ -47,6 +49,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _handleRegister() async {
+    FocusScope.of(context).unfocus();
+
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -65,30 +69,18 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (mounted) {
-        _showSnackBar("Registrasi Berhasil! Silakan masuk.");
+        _showSnackBar("Registrasi Berhasil! Silakan cek email Anda.");
         await Future.delayed(const Duration(seconds: 2));
         if (mounted) {
-          Navigator.pop(context);
+          Navigator.of(
+            context,
+          ).pushReplacement(_createBlurRoute(const LoginPage()));
         }
       }
     } on AuthException catch (e) {
-      String errorMessage = e.message;
-      String msg = e.message.toLowerCase();
-
-      if (msg.contains("already registered") ||
-          msg.contains("user already exists")) {
-        errorMessage = "Email sudah terdaftar. Gunakan email lain.";
-      } else if (msg.contains("weak password")) {
-        errorMessage = "Kata sandi terlalu lemah (minimal 6 karakter).";
-      }
-      _showSnackBar(errorMessage, isError: true);
+      _showSnackBar(e.message, isError: true);
     } catch (e) {
-      String errorText = e.toString();
-      if (errorText.contains("row-level security")) {
-        errorText =
-            "Gagal menyimpan profil. Pastikan RLS Policy INSERT sudah aktif.";
-      }
-      _showSnackBar("Terjadi kesalahan: $errorText", isError: true);
+      _showSnackBar("Terjadi kesalahan sistem.", isError: true);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -120,11 +112,19 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ),
         backgroundColor: isError
-            ? Colors.redAccent.withOpacity(0.9)
+            ? errorRed.withOpacity(0.9)
             : Colors.green.withOpacity(0.9),
         behavior: SnackBarBehavior.floating,
         elevation: 6,
-        margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).size.height * 0.05,
+          left: MediaQuery.of(context).size.width > 600
+              ? MediaQuery.of(context).size.width * 0.3
+              : 20,
+          right: MediaQuery.of(context).size.width > 600
+              ? MediaQuery.of(context).size.width * 0.3
+              : 20,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         duration: const Duration(seconds: 3),
       ),
@@ -147,12 +147,14 @@ class _RegisterPageState extends State<RegisterPage> {
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
+          // Background Image
           Positioned.fill(
             child: Image.asset(
               'assets/images/Background_FEB.jpeg',
               fit: BoxFit.cover,
             ),
           ),
+          // Blur & Gradient Overlay
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
@@ -171,81 +173,100 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
           ),
+          // Logo Kanan Atas
           Positioned(top: 40, right: 20, child: _buildTopLogo()),
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildLogoSection(),
-                        const SizedBox(height: 25),
-                        _buildHeaderSection(),
-                        const SizedBox(height: 25),
-                        _buildSlimTextField(
-                          label: "NAMA LENGKAP",
-                          controller: _nameController,
-                          hint: "Masukkan nama lengkap anda",
-                          icon: Icons.person_outline_rounded,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? "Nama wajib diisi"
-                              : null,
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 20,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      _buildLogoSection(),
+                      const SizedBox(height: 25),
+                      _buildHeaderSection(),
+                      const SizedBox(height: 25),
+                      _buildSlimTextField(
+                        label: "NAMA LENGKAP",
+                        controller: _nameController,
+                        hint: "Contoh: Budi Santoso",
+                        icon: Icons.person_outline_rounded,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return "Nama tidak boleh kosong";
+                          // Validasi: Hanya huruf dan spasi (Tanpa simbol/emoji)
+                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                            return "Nama hanya boleh berisi huruf";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      _buildSlimTextField(
+                        label: "EMAIL",
+                        controller: _emailController,
+                        hint: "username@gmail.com",
+                        icon: Icons.alternate_email_rounded,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty)
+                            return "Email tidak boleh kosong";
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value.trim()))
+                            return "Format email tidak valid";
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      _buildSlimTextField(
+                        label: "KATA SANDI",
+                        controller: _passwordController,
+                        hint: "Min. 6 karakter",
+                        icon: Icons.lock_outline_rounded,
+                        isPassword: true,
+                        isObscure: _obscurePassword,
+                        onToggle: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
                         ),
-                        const SizedBox(height: 15),
-                        _buildSlimTextField(
-                          label: "EMAIL",
-                          controller: _emailController,
-                          hint: "Masukkan email anda",
-                          icon: Icons.alternate_email_rounded,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty)
-                              return "Email wajib diisi";
-                            if (!RegExp(
-                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value.trim()))
-                              return "Format email tidak valid";
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        _buildSlimTextField(
-                          label: "KATA SANDI",
-                          controller: _passwordController,
-                          hint: "Minimal 6 karakter",
-                          icon: Icons.lock_outline_rounded,
-                          isPassword: true,
-                          validator: (value) =>
-                              (value == null || value.length < 6)
-                              ? "Minimal 6 karakter"
-                              : null,
-                        ),
-                        const SizedBox(height: 15),
-                        _buildSlimTextField(
-                          label: "KONFIRMASI KATA SANDI",
-                          controller: _confirmPasswordController,
-                          hint: "Ulangi kata sandi",
-                          icon: Icons.lock_reset_rounded,
-                          isPassword: true,
-                          validator: (value) => value == null || value.isEmpty
-                              ? "Konfirmasi wajib diisi"
-                              : null,
-                        ),
-                        const SizedBox(height: 35),
-                        _buildCompactButton(),
-                        const SizedBox(height: 25),
-                        _buildFooterLink(),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return "Sandi tidak boleh kosong";
+                          if (value.length < 6)
+                            return "Sandi minimal 6 karakter";
+                          // Mengizinkan campuran huruf, angka, dan simbol secara default
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      _buildSlimTextField(
+                        label: "KONFIRMASI KATA SANDI",
+                        controller: _confirmPasswordController,
+                        hint: "Ketik ulang sandi",
+                        icon: Icons.lock_reset_rounded,
+                        isPassword: true,
+                        isObscure: _obscureConfirm,
+                        onToggle: () =>
+                            setState(() => _obscureConfirm = !_obscureConfirm),
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return "Konfirmasi sandi wajib diisi";
+                          if (value != _passwordController.text)
+                            return "Konfirmasi sandi tidak cocok";
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 35),
+                      _buildCompactButton(),
+                      const SizedBox(height: 25),
+                      _buildFooterLink(),
+                    ],
                   ),
                 ),
               ),
@@ -261,13 +282,13 @@ class _RegisterPageState extends State<RegisterPage> {
       width: 150,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -306,7 +327,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       children: [
         const Text(
-          "Gabung ke Studio",
+          "Buat Akun Baru",
           style: TextStyle(
             color: Colors.white,
             fontSize: 26,
@@ -315,7 +336,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         const SizedBox(height: 6),
         Text(
-          "Buat akun untuk memesan jadwal podcast",
+          "Lengkapi data diri untuk mulai memesan",
           style: TextStyle(color: Colors.grey[400], fontSize: 13),
         ),
       ],
@@ -328,6 +349,8 @@ class _RegisterPageState extends State<RegisterPage> {
     required String hint,
     required IconData icon,
     bool isPassword = false,
+    bool isObscure = false,
+    VoidCallback? onToggle,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
@@ -342,13 +365,12 @@ class _RegisterPageState extends State<RegisterPage> {
               color: primaryGold,
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
             ),
           ),
         ),
         TextFormField(
           controller: controller,
-          obscureText: isPassword && _obscurePassword,
+          obscureText: isPassword && isObscure,
           validator: validator,
           keyboardType: keyboardType,
           style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -359,33 +381,31 @@ class _RegisterPageState extends State<RegisterPage> {
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                      isObscure ? Icons.visibility_off : Icons.visibility,
                       color: Colors.grey[500],
                       size: 18,
                     ),
-                    onPressed: () =>
-                        setState(() => _obscurePassword = !_obscurePassword),
+                    onPressed: onToggle,
                   )
                 : null,
             filled: true,
             fillColor: surfaceDark.withOpacity(0.9),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 20,
-            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
-            focusedBorder: OutlineInputBorder(
+            errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: primaryGold.withOpacity(0.6),
+                color: errorRed.withOpacity(0.5),
                 width: 1,
               ),
             ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: errorRed, width: 1.5),
+            ),
+            errorStyle: TextStyle(color: errorRed, fontSize: 11),
           ),
         ),
       ],
@@ -400,6 +420,7 @@ class _RegisterPageState extends State<RegisterPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryGold,
           foregroundColor: Colors.black,
+          elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -416,7 +437,11 @@ class _RegisterPageState extends State<RegisterPage> {
               )
             : const Text(
                 "DAFTAR SEKARANG",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
       ),
     );
@@ -431,11 +456,9 @@ class _RegisterPageState extends State<RegisterPage> {
           style: TextStyle(color: Colors.grey[400], fontSize: 14),
         ),
         GestureDetector(
-          onTap: () {
-            Navigator.of(
-              context,
-            ).pushReplacement(_createBlurRoute(const LoginPage()));
-          },
+          onTap: () => Navigator.of(
+            context,
+          ).pushReplacement(_createBlurRoute(const LoginPage())),
           child: Text(
             "Masuk",
             style: TextStyle(
