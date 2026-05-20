@@ -8,6 +8,7 @@ import 'admin_page.dart';
 import 'profile_page.dart';
 import 'rincian_peminjaman_page.dart';
 
+// Halaman utama aplikasi: menampilkan profil, akses reservasi, dan dashboard admin.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -15,8 +16,10 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+// State user dan tampilan di homepage.
 class _HomePageState extends State<HomePage> {
   final SupabaseService _apiService = SupabaseService();
+
   String? role;
   String? email;
   String? name;
@@ -34,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     _fetchUserData();
   }
 
-  // PERBAIKAN: Menampilkan rute dari lokasi user ke FEB Unmul
+  // Buka Google Maps dengan rute langsung ke lokasi FEB Unmul.
   Future<void> _openGoogleMaps() async {
     const String googleMapsUrl =
         "https://www.google.com/maps/dir/?api=1&destination=FEB+Universitas+Mulawarman&origin=My+Location";
@@ -44,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Muat data user dan role untuk menentukan tampilan menu.
   Future<void> _fetchUserData() async {
     if (!mounted) return;
     setState(() => isLoading = true);
@@ -80,6 +84,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Ambil statistik admin jika user memiliki role admin.
   Future<void> _fetchAdminStats() async {
     try {
       final total = await _apiService.getTotalReservasiBulanIni();
@@ -93,6 +98,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Build UI utama homepage dengan background, profil, dan menu.
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -114,11 +120,13 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildTopBar(),
-                            SizedBox(height: screenHeight * 0.10),
+                            SizedBox(
+                              height: screenHeight * 0.07,
+                            ), // Disesuaikan agar responsif dan tidak overflow
                             _buildHeroText(),
-                            const SizedBox(height: 60),
+                            const SizedBox(height: 45),
                             _buildLargeProfileCard(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 30),
                             _buildSectionLabel("LAYANAN UTAMA"),
                             const SizedBox(height: 15),
                           ],
@@ -144,12 +152,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Background efek sinematik di bagian atas halaman.
   Widget _buildCinematicBackground(double height) {
     return Positioned(
       top: 2,
       left: 0,
       right: 0,
-      height: height * 0.55,
+      height: height * 0.58,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -165,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.95),
+                  Colors.black.withOpacity(0.99),
                   Colors.transparent,
                   bgDark,
                 ],
@@ -188,9 +197,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Bar atas berisi branding, tombol lokasi, refresh, dan avatar kecil.
   Widget _buildTopBar() {
     return Padding(
-      padding: const EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -202,19 +212,25 @@ class _HomePageState extends State<HomePage> {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(
+                    alpha: 0.5,
+                  ), // Diperbarui ke .withValues
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: primaryGold.withOpacity(0.5)),
+                  border: Border.all(
+                    color: primaryGold.withValues(alpha: 0.5),
+                  ), // Diperbarui ke .withValues
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.auto_awesome, color: primaryGold, size: 12),
-                    SizedBox(width: 8),
+                    Icon(Icons.auto_awesome, color: primaryGold, size: 10),
+                    SizedBox(
+                      width: 8,
+                    ), // PERBAIKAN: STheme yang error diganti dengan SizedBox bersih
                     Text(
                       "FEB UNMUL",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
@@ -232,16 +248,20 @@ class _HomePageState extends State<HomePage> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(
+                      alpha: 0.09,
+                    ), // Diperbarui ke .withValues
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ), // Diperbarui ke .withValues
                   ),
                   child: const Row(
                     children: [
                       Icon(
                         Icons.location_on_rounded,
                         color: primaryGold,
-                        size: 14,
+                        size: 12,
                       ),
                       SizedBox(width: 6),
                       Text(
@@ -260,23 +280,25 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _fetchUserData,
                 icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 5),
               GestureDetector(
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const ProfilePage()),
                 ).then((_) => _fetchUserData()),
                 child: Container(
-                  padding: const EdgeInsets.all(2),
+                  padding: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: primaryGold.withOpacity(0.5),
+                      color: primaryGold.withValues(
+                        alpha: 0.7,
+                      ), // Diperbarui ke .withValues
                       width: 1.5,
                     ),
                   ),
                   child: CircleAvatar(
-                    radius: 16,
+                    radius: 17,
                     backgroundColor: surfaceDark,
                     foregroundImage: (profileImageUrl != null)
                         ? NetworkImage(profileImageUrl!)
@@ -320,40 +342,41 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 40),
         const Text(
           "Ruang Kreativitas",
           style: TextStyle(
             color: Colors.white,
-            fontSize: 42,
+            fontSize: 38,
             fontWeight: FontWeight.w200,
-            height: 1.1,
+            height: 1.2,
           ),
         ),
         const Text(
           "Masa Depan",
           style: TextStyle(
             color: Colors.white,
-            fontSize: 42,
+            fontSize: 38,
             fontWeight: FontWeight.w900,
-            height: 1.1,
+            height: 1.2,
           ),
         ),
       ],
     );
   }
 
+  // Kartu profil user besar yang menampilkan nama, email, dan avatar kotak.
   Widget _buildLargeProfileCard() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(30),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.07),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.3)),
           ),
           child: Row(
             children: [
@@ -363,23 +386,29 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   color: Colors.black54,
-                  image: profileImageUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(profileImageUrl!),
-                          fit: BoxFit.cover,
-                          onError: (_, __) {
-                            setState(() => profileImageUrl = null);
-                          },
-                        )
-                      : null,
                 ),
-                child: profileImageUrl == null
-                    ? const Icon(
+                // PERBAIKAN LOGIKA: Menggunakan ClipRRect + Image.network dengan errorBuilder
+                // agar ketika error/gagal load, state global profileImageUrl tidak dipaksa null secara permanen.
+                child: profileImageUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          profileImageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.mic_none_rounded,
+                              color: primaryGold,
+                              size: 28,
+                            );
+                          },
+                        ),
+                      )
+                    : const Icon(
                         Icons.mic_none_rounded,
                         color: primaryGold,
                         size: 28,
-                      )
-                    : null,
+                      ),
               ),
               const SizedBox(width: 20),
               Expanded(
@@ -391,7 +420,7 @@ class _HomePageState extends State<HomePage> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 19,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -407,7 +436,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: primaryGold.withOpacity(0.1),
                   shape: BoxShape.circle,
@@ -425,6 +454,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Logika menu utama: tampilkan menu admin atau reservasi biasa.
   Widget _buildMenuLogic() {
     if (role == 'admin') {
       return Column(
@@ -455,6 +485,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Kartu statistik total reservasi bulanan untuk admin.
   Widget _buildStatsCard() {
     final String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
 
@@ -537,6 +568,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Kartu menu besar untuk navigasi ke fitur utama.
   Widget _buildLargeMenuCard({
     required String title,
     required String subtitle,
@@ -591,6 +623,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Label section kecil untuk memisahkan area menu.
   Widget _buildSectionLabel(String text) {
     return Row(
       children: [

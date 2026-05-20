@@ -1,3 +1,4 @@
+// Model data user untuk menyimpan profil, kontak, dan peran user.
 class UserModel {
   final String id;
   final String email;
@@ -6,6 +7,7 @@ class UserModel {
   final String role;
   final String? avatarUrl;
 
+  // Konstruktor utama UserModel.
   UserModel({
     required this.id,
     required this.email,
@@ -15,6 +17,7 @@ class UserModel {
     this.avatarUrl,
   });
 
+  // Buat UserModel dari data JSON yang diterima dari Supabase.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id']?.toString() ?? '',
@@ -26,6 +29,7 @@ class UserModel {
     );
   }
 
+  // Konversi objek UserModel ke format JSON untuk penyimpanan atau update.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -37,6 +41,6 @@ class UserModel {
     };
   }
 
-  // Helper untuk pengecekan role yang lebih aman
+  // Helper untuk memeriksa apakah user memiliki peran admin.
   bool get isAdmin => role.toLowerCase() == 'admin';
 }

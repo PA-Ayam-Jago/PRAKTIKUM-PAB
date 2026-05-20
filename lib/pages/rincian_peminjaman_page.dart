@@ -10,20 +10,26 @@ class RincianPeminjamanPage extends StatefulWidget {
 }
 
 class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
+  // Service Supabase untuk mengambil data reservasi.
   final SupabaseService _apiService = SupabaseService();
+
+  // Data lengkap dan data hasil filter untuk tampilan daftar.
   List<Reservation> allData = [];
   List<Reservation> filteredData = [];
   bool isLoading = true;
 
+  // Kata kunci pencarian dan filter status.
   String searchQuery = "";
   String selectedStatus = "Semua";
 
   @override
   void initState() {
     super.initState();
+    // Muat data awal saat halaman dibuat.
     _loadData();
   }
 
+  // Ambil semua reservasi dari backend dan simpan ke state.
   Future<void> _loadData() async {
     try {
       final data = await _apiService.getAllReservations();
@@ -38,6 +44,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     }
   }
 
+  // Terapkan pencarian dan filter status ke daftar reservasi.
   void _applyFilter() {
     setState(() {
       filteredData = allData.where((res) {
@@ -56,6 +63,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     });
   }
 
+  // Tentukan apakah reservasi sudah berlalu atau belum.
   String _getUsageStatus(String dateStr) {
     try {
       DateTime reservationDate = DateTime.parse(dateStr);
@@ -104,7 +112,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
       ),
       body: Column(
         children: [
-          // Search Bar
+          // Input pencarian nama atau tanggal.
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: TextField(
@@ -130,6 +138,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
             ),
           ),
 
+          // Filter status reservasi sebagai pilihan chip.
           Align(
             alignment: Alignment.centerLeft,
             child: SingleChildScrollView(
@@ -178,6 +187,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
             ),
           ),
 
+          // Tampilkan loading, empty state, atau daftar detail peminjaman.
           Expanded(
             child: isLoading
                 ? const Center(
@@ -293,6 +303,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     );
   }
 
+  // Baris informasi kecil dengan ikon dan teks.
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
@@ -306,6 +317,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     );
   }
 
+  // Badge status reservasi (Approved/Pending/Rejected).
   Widget _buildStatusBadge(String status) {
     final color = _getStatusColor(status);
     return Container(
@@ -326,6 +338,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     );
   }
 
+  // Badge kecil untuk tanda pemakaian sudah selesai atau belum.
   Widget _buildUsageBadge(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -344,6 +357,7 @@ class _RincianPeminjamanPageState extends State<RincianPeminjamanPage> {
     );
   }
 
+  // Warna badge berdasarkan status reservasi.
   Color _getStatusColor(String status) {
     switch (status.trim().toLowerCase()) {
       case 'disetujui':

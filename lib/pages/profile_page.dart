@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shake/shake.dart';
+import 'package:sensors_plus/sensors_plus.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Untuk manajemen hapus kredensial aman
 import '../services/supabase_service.dart';
+import 'dart:async';
 
+// Halaman profil: menampilkan dan mengedit data user, avatar, dan logout.
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -11,8 +14,11 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
+// State profil: mengelola foto, data profil, sensor guncangan, dan autentikasi.
 class _ProfilePageState extends State<ProfilePage> {
   final SupabaseService _apiService = SupabaseService();
+  final FlutterSecureStorage _secureStorage =
+      const FlutterSecureStorage(); // Instance storage aman
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
@@ -23,7 +29,15 @@ class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _selectedFileBytes;
   String? _selectedFileExt;
 
-  ShakeDetector? _shakeDetector;
+  StreamSubscription? _accelSubscription;
+
+  double _lastX = 0;
+  double _lastY = 0;
+  double _lastZ = 0;
+
+  DateTime _lastShakeTime = DateTime.now();
+  bool _isDialogShowing =
+      false; // LOGIKA BARU: Pengunci agar dialog tidak tumpang tindih
 
   static const Color primaryGold = Color(0xFFD4AF37);
   static const Color bgDark = Color(0xFF0D0D0D);
@@ -34,39 +48,80 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _loadProfileData();
-    _initShakeSensor();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initShakeSensor();
+    });
   }
 
   @override
   void dispose() {
+    _accelSubscription?.cancel();
+
     _nameController.dispose();
     _deskripsiController.dispose();
     _emailController.dispose();
-    _shakeDetector?.stopListening();
+
     super.dispose();
   }
 
+  // Aktifkan deteksi guncangan untuk hapus foto avatar.
   void _initShakeSensor() {
-    _shakeDetector = ShakeDetector.autoStart(
-      onPhoneShake: () {
-        if (_selectedFileBytes != null ||
-            (_avatarUrl != null && _avatarUrl!.isNotEmpty)) {
+    _accelSubscription?.cancel();
+
+    _accelSubscription = accelerometerEvents.listen((event) {
+      if (!mounted) return;
+
+      final now = DateTime.now();
+
+      // hitung perubahan gerakan
+      double deltaX = (event.x - _lastX).abs();
+      double deltaY = (event.y - _lastY).abs();
+      double deltaZ = (event.z - _lastZ).abs();
+
+      _lastX = event.x;
+      _lastY = event.y;
+      _lastZ = event.z;
+
+      double force = deltaX + deltaY + deltaZ;
+
+      // anti spam trigger (1.5 detik cooldown)
+      if (now.difference(_lastShakeTime).inMilliseconds < 1500) return;
+
+      // threshold shake (bisa disesuaikan)
+      if (force > 14 && force < 80) {
+        _lastShakeTime = now;
+
+        final hasAvatar =
+            _selectedFileBytes != null ||
+            (_avatarUrl?.trim().isNotEmpty ?? false);
+
+        if (!_isDialogShowing && hasAvatar) {
           _confirmClearPhoto();
         }
-      },
-      shakeThresholdGravity: 2.7,
-    );
+      }
+    });
   }
 
+  // Dialog konfirmasi hapus foto saat ponsel diguncang.
   void _confirmClearPhoto() {
+    if (!mounted) return;
+
+    setState(() => _isDialogShowing = true);
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: const Text(
-          "Hapus Foto? 🗑️",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          "Hapus Foto?",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: const Text(
           "Guncangan terdeteksi. Ingin menghapus atau reset foto profil ini?",
@@ -74,18 +129,28 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              setState(() => _isDialogShowing = false);
+              Navigator.pop(context);
+            },
             child: const Text("BATAL", style: TextStyle(color: Colors.grey)),
           ),
+
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              setState(() => _isDialogShowing = false);
+              Navigator.pop(context);
+
               setState(() {
                 _selectedFileBytes = null;
                 _selectedFileExt = null;
-                _avatarUrl = null;
               });
-              Navigator.pop(context);
-              _showSnackBar("Foto profil direset", isError: false);
+
+              await _removeProfilePhoto();
+
+              if (mounted) {
+                _showSnackBar("Foto profil direset", isError: false);
+              }
             },
             child: const Text(
               "HAPUS",
@@ -94,13 +159,44 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      if (mounted) {
+        setState(() => _isDialogShowing = false);
+      }
+    });
   }
 
-  Future<void> _loadProfileData() async {
+  Future<void> _removeProfilePhoto() async {
     try {
       final user = _apiService.currentUser;
       if (user == null) return;
+
+      if (_avatarUrl != null && _avatarUrl!.isNotEmpty) {
+        final path = _avatarUrl!.split('/avatars/').last;
+
+        await _apiService.client.storage.from('avatars').remove([path]);
+      }
+
+      await _apiService.client
+          .from('profiles')
+          .update({'avatar_url': null})
+          .eq('id', user.id);
+
+      if (mounted) {
+        setState(() {
+          _avatarUrl = null;
+        });
+      }
+    } catch (e) {
+      _showSnackBar("Gagal menghapus foto", isError: true);
+    }
+  }
+
+  // Muat data profil user dari Supabase.
+  Future<void> _loadProfileData() async {
+    try {
+      final user = _apiService.currentUser;
+      if (!mounted || user == null) return;
 
       _emailController.text = user.email ?? "";
       final userData = await _apiService.getUserModel(user.id);
@@ -120,6 +216,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Ambil gambar dari kamera atau galeri.
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
@@ -130,7 +227,24 @@ class _ProfilePageState extends State<ProfilePage> {
     if (image == null) return;
 
     final Uint8List bytes = await image.readAsBytes();
-    final String extension = image.name.split('.').last.toLowerCase();
+
+    if (bytes.lengthInBytes > 2 * 1024 * 1024) {
+      _showSnackBar("Ukuran gambar maksimal 2MB", isError: true);
+      return;
+    }
+
+    final String extension = image.name.contains('.')
+        ? image.name.split('.').last.toLowerCase()
+        : 'jpg';
+
+    final allowedExt = ['jpg', 'jpeg', 'png'];
+
+    if (!allowedExt.contains(extension)) {
+      _showSnackBar("Format gambar harus JPG atau PNG", isError: true);
+      return;
+    }
+
+    if (!mounted) return;
 
     setState(() {
       _selectedFileBytes = bytes;
@@ -138,10 +252,11 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  // Modal untuk pilih sumber foto: kamera atau galeri.
   void _showImageSourcePicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent, // Agar border radius terlihat
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: surfaceDark,
@@ -199,6 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Item tombol untuk sumber foto (kamera atau galeri).
   Widget _buildSourceItem({
     required IconData icon,
     required String label,
@@ -233,9 +349,20 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Simpan profil ke Supabase dengan upload avatar jika ada.
   Future<void> _updateProfile() async {
-    if (_nameController.text.isEmpty) {
+    if (_nameController.text.trim().isEmpty) {
       _showSnackBar("Nama tidak boleh kosong", isError: true);
+      return;
+    }
+
+    if (_nameController.text.trim().length < 3) {
+      _showSnackBar("Nama terlalu pendek", isError: true);
+      return;
+    }
+
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(_nameController.text.trim())) {
+      _showSnackBar("Nama hanya boleh berisi huruf", isError: true);
       return;
     }
 
@@ -261,6 +388,7 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _avatarUrl = finalAvatarUrl;
           _selectedFileBytes = null;
+          _selectedFileExt = null;
         });
         _showSnackBar("Profil berhasil diperbarui!", isError: false);
       }
@@ -271,6 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Dialog konfirmasi logout dan bersihkan data lokal.
   void _confirmLogout() {
     showDialog(
       context: context,
@@ -299,7 +428,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 final navigator = Navigator.of(context);
                 try {
                   Navigator.pop(dialogContext);
+
+                  _accelSubscription?.cancel();
+
+                  // 1. Putuskan sesi cloud dari Supabase
                   await _apiService.signOut();
+
+                  // 2. Bersihkan penyimpanan aman lokal
+                  await _secureStorage.delete(key: "saved_email");
+                  await _secureStorage.delete(key: "saved_password");
+
+                  // 3. Arahkan kembali ke halaman login
                   navigator.pushNamedAndRemoveUntil('/login', (route) => false);
                 } catch (e) {
                   if (mounted) _showSnackBar("Gagal logout: $e", isError: true);
@@ -316,16 +455,21 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Tampilkan pesan notifikasi (snackbar) ke user.
   void _showSnackBar(String message, {required bool isError}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
         backgroundColor: isError ? errorRed : Colors.green,
         behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
+  // UI utama halaman profil.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -400,6 +544,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Avatar preview dengan opsi upload/ubah foto.
   Widget _buildAvatarPreview() {
     ImageProvider? imageProvider;
     if (_selectedFileBytes != null) {
@@ -458,6 +603,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Field input teks dengan label dan icon.
   Widget _buildTextField(
     String label,
     TextEditingController controller,
@@ -509,6 +655,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Tombol simpan perubahan profil.
   Widget _buildSaveButton() {
     return SizedBox(
       width: double.infinity,
@@ -535,6 +682,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Tombol logout dari akun.
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,

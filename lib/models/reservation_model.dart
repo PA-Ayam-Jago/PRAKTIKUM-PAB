@@ -1,3 +1,4 @@
+// Model data reservasi yang digunakan untuk menyimpan dan mengirim detail jadwal.
 class Reservation {
   final String id;
   final String fullName;
@@ -8,6 +9,7 @@ class Reservation {
   final String deskripsi;
   final String status;
 
+  // Konstruktor untuk membuat objek reservasi.
   Reservation({
     required this.id,
     required this.fullName,
@@ -19,6 +21,7 @@ class Reservation {
     required this.status,
   });
 
+  // Buat instance Reservation dari data JSON Supabase.
   factory Reservation.fromJson(Map<String, dynamic> json) {
     return Reservation(
       id: json['id'].toString(),
@@ -32,6 +35,7 @@ class Reservation {
     );
   }
 
+  // Konversi objek Reservation menjadi format JSON untuk dikirim ke Supabase.
   Map<String, dynamic> toJson() {
     return {
       'full_name': fullName,

@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart'; // Import library biometrik
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/supabase_service.dart';
+import '../services/biometric_service.dart';
 import 'register_page.dart';
 
+// Halaman login utama dengan email/password dan biometric auth.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -19,8 +21,10 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _apiService = SupabaseService();
 
-  // Inisialisasi Local Auth
-  final LocalAuthentication auth = LocalAuthentication();
+  final BiometricService _biometricService = BiometricService();
+  final _secureStorage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -30,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   final Color surfaceDark = const Color(0xFF161616);
   final Color errorRed = const Color(0xFFCF6679);
 
+  // Buat transisi halaman dengan efek blur saat pindah ke register.
   Route _createBlurRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -49,48 +54,73 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // LOGIKA: Autentikasi Biometrik
+  // Autentikasi biometrik disinkronkan menggunakan service Anda agar stabil di mode rilis
   Future<void> _handleBiometricAuth() async {
     try {
-      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate =
-          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+      final bool canAuthenticate = await _biometricService.checkBiometrics();
 
       if (!canAuthenticate) {
-        _showSnackBar("Perangkat tidak mendukung biometrik", isError: true);
+        _showSnackBar(
+          "Perangkat tidak mendukung biometrik atau sensor mati",
+          isError: true,
+        );
         return;
       }
 
-      final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Silakan pindai sidik jari Anda untuk masuk',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
+      // Ambil data kredensial terenkripsi yang tersimpan dari login manual sebelumnya
+      String? savedEmail = await _secureStorage.read(key: "saved_email");
+      String? savedPassword = await _secureStorage.read(key: "saved_password");
+
+      if (savedEmail == null || savedPassword == null) {
+        _showSnackBar(
+          "Silakan login manual dengan email & sandi terlebih dahulu sekali.",
+          isError: true,
+        );
+        return;
+      }
+
+      // Memanggil fungsi autentikasi resmi dari BiometricService Anda
+      final bool didAuthenticate = await _biometricService.authenticate();
 
       if (didAuthenticate) {
-        if (mounted) {
-          _showSnackBar("Login Berhasil via Biometrik!");
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        }
+        if (!mounted) return;
+
+        // Memasukkan data langsung ke controller di dalam setState
+        setState(() {
+          _emailController.text = savedEmail;
+          _passwordController.text = savedPassword;
+        });
+
+        _showSnackBar("Sidik jari cocok! Memproses login...");
+
+        // PERBAIKAN: Menggunakan addPostFrameCallback (lebih aman daripada Future.delayed untuk siklus render Flutter)
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _handleLogin();
+          }
+        });
       }
-    } on PlatformException catch (e) {
-      _showSnackBar("Gagal memproses sidik jari: ${e.message}", isError: true);
+    } catch (e) {
+      _showSnackBar("Gagal memproses sidik jari perangkat", isError: true);
     }
   }
 
+  // Proses login email/password dan simpan kredensial dengan aman.
   Future<void> _handleLogin() async {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
+    final String inputEmail = _emailController.text.trim();
+    final String inputPassword = _passwordController.text;
+
     try {
-      await _apiService.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+      await _apiService.signIn(email: inputEmail, password: inputPassword);
+
+      // JIKA BERHASIL LOGIN SUPABASE: Amankan data ke local storage terenkripsi
+      await _secureStorage.write(key: "saved_email", value: inputEmail);
+      await _secureStorage.write(key: "saved_password", value: inputPassword);
 
       await _apiService.getCurrentUserProfile();
 
@@ -123,8 +153,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Tampilkan pesan umpan balik ke user menggunakan snackbar.
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
+
+    // Ambil ukuran layar saat metode dipanggil untuk mencegah context crash di dalam properti margin
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -154,18 +191,28 @@ class _LoginPageState extends State<LoginPage> {
         behavior: SnackBarBehavior.floating,
         elevation: 6,
         margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.05,
-          left: MediaQuery.of(context).size.width > 600
-              ? MediaQuery.of(context).size.width * 0.3
-              : 20,
-          right: MediaQuery.of(context).size.width > 600
-              ? MediaQuery.of(context).size.width * 0.3
-              : 20,
+          bottom: screenHeight * 0.05,
+          left: screenWidth > 600 ? screenWidth * 0.3 : 20,
+          right: screenWidth > 600 ? screenWidth * 0.3 : 20,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args['autoTriggerBiometric'] == true) {
+        _handleBiometricAuth();
+      }
+    });
   }
 
   @override
@@ -233,13 +280,15 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty)
+                          if (value == null || value.trim().isEmpty) {
                             return "Email tidak boleh kosong";
+                          }
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           );
-                          if (!emailRegex.hasMatch(value.trim()))
+                          if (!emailRegex.hasMatch(value.trim())) {
                             return "Format email tidak valid";
+                          }
                           return null;
                         },
                       ),
@@ -253,15 +302,17 @@ class _LoginPageState extends State<LoginPage> {
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _handleLogin(),
                         validator: (value) {
-                          if (value == null || value.isEmpty)
+                          if (value == null || value.isEmpty) {
                             return "Kata sandi tidak boleh kosong";
-                          if (value.length < 6)
+                          }
+                          if (value.length < 6) {
                             return "Kata sandi minimal 6 karakter";
+                          }
                           return null;
                         },
                       ),
                       const SizedBox(height: 35),
-                      _buildActionButtonsRow(), // VERSI PERSEGI SELARAS
+                      _buildActionButtonsRow(),
                       const SizedBox(height: 25),
                       _buildFooterLink(),
                     ],
@@ -404,24 +455,17 @@ class _LoginPageState extends State<LoginPage> {
                 width: 1,
               ),
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: errorRed, width: 1.5),
-            ),
-            errorStyle: TextStyle(color: errorRed, fontSize: 11),
           ),
         ),
       ],
     );
   }
 
-  // WIDGET DIPERBAIK: Tombol Sidik Jari berbentuk Persegi (Rounded) agar selaras
   Widget _buildActionButtonsRow() {
     const double targetHeight = 54.0;
 
     return Row(
       children: [
-        // Tombol Login Manual
         Expanded(
           flex: 4,
           child: SizedBox(
@@ -432,9 +476,7 @@ class _LoginPageState extends State<LoginPage> {
                 foregroundColor: Colors.black,
                 elevation: 4,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    12,
-                  ), // Selaras dengan input
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
               onPressed: _isLoading ? null : _handleLogin,
@@ -460,7 +502,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         const SizedBox(width: 12),
-        // Tombol Sensor Sidik Jari (Persegi Rounded agar rapi & profesional)
         GestureDetector(
           onTap: _isLoading ? null : _handleBiometricAuth,
           child: Container(
@@ -468,9 +509,7 @@ class _LoginPageState extends State<LoginPage> {
             height: targetHeight,
             decoration: BoxDecoration(
               color: surfaceDark,
-              borderRadius: BorderRadius.circular(
-                12,
-              ), // Mengubah Lingkaran menjadi Persegi Rounded
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: primaryGold, width: 1.5),
               boxShadow: [
                 BoxShadow(

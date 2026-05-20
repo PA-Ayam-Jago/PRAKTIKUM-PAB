@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/reservation_model.dart';
 import '../services/supabase_service.dart';
 
+// Halaman admin: menampilkan kalender dan detail reservasi untuk monitoring.
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
 
@@ -11,6 +12,7 @@ class AdminPage extends StatefulWidget {
   State<AdminPage> createState() => _AdminPageState();
 }
 
+// State internal halaman admin.
 class _AdminPageState extends State<AdminPage> {
   final SupabaseService _apiService = SupabaseService();
 
@@ -30,6 +32,7 @@ class _AdminPageState extends State<AdminPage> {
     _selectedDay = _focusedDay;
   }
 
+  // Kelompokkan data reservasi per tanggal untuk kalender.
   void _groupEvents(List<Reservation> data) {
     _events = {};
     for (var item in data) {
@@ -45,6 +48,7 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
+  // Update status reservasi (approved/rejected) melalui Supabase.
   Future<void> _handleUpdateStatus(String id, String status) async {
     try {
       await _apiService.updateReservationStatus(id, status);
@@ -59,6 +63,7 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
+  // Tampilkan notifikasi kecil di atas layar setelah aksi.
   void _showTopNotification(String message, bool isSuccess) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -113,6 +118,7 @@ class _AdminPageState extends State<AdminPage> {
     Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
   }
 
+  // UI utama halaman admin.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,9 +188,10 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Judul section detail reservasi.
   Widget _buildSectionTitle() {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Row(
         children: [
           Text(
@@ -203,10 +210,11 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Komponen kalender dengan event yang menandai tanggal reservasi.
   Widget _buildCalendar() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(24, 10, 24, 10),
-      padding: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.fromLTRB(24, 1, 24, 1),
+      padding: const EdgeInsets.only(bottom: 1),
       decoration: BoxDecoration(
         color: surfaceDark,
         borderRadius: BorderRadius.circular(25),
@@ -262,6 +270,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Info box menampilkan tanggal yang dipilih di kalender.
   Widget _buildInfoBox() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -306,6 +315,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Kartu detail reservasi untuk admin, termasuk aksi approve/reject.
   Widget _buildAdminCard(Reservation item) {
     final status = item.status.toLowerCase();
     Color statusColor = status == 'approved'
@@ -399,6 +409,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Badge status reservasi (approved/rejected/pending).
   Widget _buildBadge(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -417,6 +428,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Tombol aksi untuk approve atau reject reservasi.
   Widget _buildActionBtn(
     String label,
     Color color,
@@ -446,6 +458,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Tampilan saat tidak ada reservasi pada tanggal yang dipilih.
   Widget _buildEmptyState() {
     return Center(
       child: Column(

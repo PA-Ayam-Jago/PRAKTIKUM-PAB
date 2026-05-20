@@ -5,7 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import '../models/reservation_model.dart';
 import '../services/supabase_service.dart';
+import 'package:flutter/services.dart';
 
+// Halaman reservasi: menampilkan daftar jadwal studio dan form reservasi.
 class ReservasiPage extends StatefulWidget {
   const ReservasiPage({super.key});
 
@@ -13,6 +15,7 @@ class ReservasiPage extends StatefulWidget {
   State<ReservasiPage> createState() => _ReservasiPageState();
 }
 
+// State halaman reservasi: menangani input user, validasi, dan interaksi Supabase.
 class _ReservasiPageState extends State<ReservasiPage> {
   final supabase = Supabase.instance.client;
   final _apiService = SupabaseService();
@@ -32,6 +35,11 @@ class _ReservasiPageState extends State<ReservasiPage> {
   bool _filterOnlyMe = false;
 
   bool _isProcessing = false;
+  int _refreshCounter = 0;
+
+  // --------------------
+  // State internal halaman
+  // --------------------
 
   static const Color primaryGold = Color(0xFFD4AF37);
   static const Color bgDark = Color(0xFF0A0A0A);
@@ -50,6 +58,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     super.dispose();
   }
 
+  // Menampilkan notifikasi kecil di bagian atas layar.
   void _showTopNotification(
     BuildContext context,
     String message,
@@ -88,6 +97,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
   }
 
+  // Menentukan label penggunaan aktif/sudah selesai untuk reservasi approve.
   Widget _buildUsageStatus(
     String tanggal,
     String mulai,
@@ -133,6 +143,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Cek apakah jadwal baru bertabrakan dengan reservasi approved lain.
   Future<bool> _isTimeSlotOverlap(
     String tanggal,
     String mulai,
@@ -160,7 +171,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     return false;
   }
 
-  // LOGIKA BARU: Cek apakah user sudah punya reservasi di hari tersebut
+  // Cek apakah user sudah punya reservasi pada tanggal yang sama.
   Future<bool> _hasExistingReservationToday(
     String userId,
     String tanggal,
@@ -171,10 +182,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
         .select()
         .eq('user_id', userId)
         .eq('tanggal', tanggal)
-        .neq(
-          'status',
-          'rejected',
-        ); // Kecuali yang ditolak, semua status dihitung (pending/approved)
+        .neq('status', 'rejected');
 
     if (response.isEmpty) return false;
 
@@ -189,6 +197,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     return true;
   }
 
+  // Simpan data reservasi baru atau update reservasi existing.
   Future<void> _simpanReservasi({
     String? editId,
     required String userId,
@@ -281,8 +290,19 @@ class _ReservasiPageState extends State<ReservasiPage> {
         await supabase.from('reservations').update(updateData).eq('id', editId);
       }
 
+      // --- PERBAIKAN DI SINI ---
       if (mounted) {
+        // 1. Tutup bottom sheet terlebih dahulu
         Navigator.pop(modalCtx);
+
+        // 2. Langsung set filter ke "RESERVASI SAYA" secara bersih tanpa microtask delay
+        setState(() {
+          _filterOnlyMe = true;
+          _searchQuery =
+              ""; // Opsional: bersihkan search query agar data pasti muncul
+        });
+
+        // 3. Tampilkan notifikasi sukses
         _showTopNotification(
           context,
           "Berhasil dikirim, menunggu persetujuan",
@@ -296,6 +316,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     }
   }
 
+  // UI utama halaman reservasi.
   @override
   Widget build(BuildContext context) {
     final String? uid = supabase.auth.currentUser?.id;
@@ -344,6 +365,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Bagian pencarian dan filter reservasi.
   Widget _buildSearchArea() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
@@ -432,6 +454,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Kotak informasi jam operasional studio.
   Widget _buildInfoBox() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -469,6 +492,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Daftar reservasi yang diambil realtime dari Supabase.
   Widget _buildList(String uid) {
     return StreamBuilder<List<Map<String, dynamic>>>(
       stream: supabase
@@ -525,6 +549,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Kartu tampilan satu reservasi dalam daftar.
   Widget _buildCard(Map<String, dynamic> i, String uid) {
     bool isMe = i['user_id'].toString().trim() == uid.trim();
     String stat = i['status'] ?? 'pending';
@@ -647,6 +672,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Dialog konfirmasi sebelum menghapus reservasi.
   void _konfirmasiHapus(String id) {
     showDialog(
       context: context,
@@ -668,9 +694,26 @@ class _ReservasiPageState extends State<ReservasiPage> {
           ),
           TextButton(
             onPressed: () async {
-              await supabase.from('reservations').delete().eq('id', id);
-              if (mounted) Navigator.pop(ctx);
-              _showTopNotification(context, "Jadwal berhasil dihapus", true);
+              try {
+                await supabase.from('reservations').delete().eq('id', id);
+
+                if (mounted) Navigator.pop(ctx);
+
+                if (mounted) {
+                  setState(() {
+                    setState(() => _refreshCounter++);
+                  });
+                }
+
+                _showTopNotification(context, "Jadwal berhasil dihapus", true);
+              } catch (e) {
+                if (mounted) Navigator.pop(ctx);
+                _showTopNotification(
+                  context,
+                  "Gagal menghapus jadwal: $e",
+                  false,
+                );
+              }
             },
             child: const Text(
               "HAPUS",
@@ -685,6 +728,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Modal form untuk tambah atau edit reservasi.
   void _showForm({Map<String, dynamic>? item, required String userId}) {
     if (item != null) {
       _namaController.text = item['full_name'] ?? '';
@@ -759,12 +803,19 @@ class _ReservasiPageState extends State<ReservasiPage> {
                     _namaController,
                     Icons.person_outline,
                     "Contoh: Budi Santoso",
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                    ],
                     validator: (v) {
-                      if (v == null || v.isEmpty)
+                      if (v == null || v.isEmpty) {
                         return "Nama tidak boleh kosong";
-                      if (v.length < 3) return "Nama terlalu pendek";
-                      if (RegExp(r'[0-9]').hasMatch(v))
-                        return "Nama tidak boleh mengandung angka";
+                      }
+                      if (v.length < 3) {
+                        return "Nama terlalu pendek";
+                      }
+                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(v)) {
+                        return "Nama hanya boleh berisi huruf";
+                      }
                       return null;
                     },
                   ),
@@ -776,11 +827,17 @@ class _ReservasiPageState extends State<ReservasiPage> {
                     Icons.phone_iphone_rounded,
                     "Contoh: 08123456789",
                     keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(13),
+                    ],
                     validator: (v) {
-                      if (v == null || v.isEmpty)
+                      if (v == null || v.isEmpty) {
                         return "Nomor WA tidak boleh kosong";
-                      if (!RegExp(r'^(08|628)[0-9]{8,11}$').hasMatch(v))
+                      }
+                      if (!RegExp(r'^(08|628)[0-9]{8,11}$').hasMatch(v)) {
                         return "Format nomor tidak valid";
+                      }
                       return null;
                     },
                   ),
@@ -902,8 +959,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       return null;
                     },
                   ),
-
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 19),
 
                   SizedBox(
                     width: double.infinity,
@@ -926,7 +982,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       child: _isProcessing
                           ? const CircularProgressIndicator(color: Colors.black)
                           : const Text(
-                              "DAFTAR SEKARANG",
+                              "DAFTAR JADWAL",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w900,
@@ -966,6 +1022,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Label kecil untuk setiap field input.
   Widget _buildInputLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 8),
@@ -981,6 +1038,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     );
   }
 
+  // Field input dengan styling khusus untuk form reservasi.
   Widget _buildRegisterStyleField(
     TextEditingController c,
     IconData icon,
@@ -990,9 +1048,11 @@ class _ReservasiPageState extends State<ReservasiPage> {
     bool readOnly = false,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: c,
+      inputFormatters: inputFormatters,
       onTap: onTap,
       readOnly: readOnly,
       validator: validator,

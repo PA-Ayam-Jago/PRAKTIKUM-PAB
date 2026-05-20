@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/reservation_model.dart';
 import '../models/user_model.dart';
 
+// Layanan wrapper Supabase untuk auth, profil, storage, dan reservasi.
 class SupabaseService {
   final _supabase = Supabase.instance.client;
 
@@ -14,6 +15,7 @@ class SupabaseService {
   // ================= AUTHENTICATION =================
 
   // SIGN IN
+  // Masuk dengan email dan password menggunakan Supabase Auth.
   Future<AuthResponse> signIn({
     required String email,
     required String password,
@@ -31,6 +33,7 @@ class SupabaseService {
   }
 
   // SIGN UP
+  // Buat akun baru dan simpan profil awal di tabel profiles.
   Future<void> signUp({
     required String email,
     required String password,
@@ -63,6 +66,7 @@ class SupabaseService {
   }
 
   // LOGOUT
+  // Keluar dari sesi Supabase saat ini.
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
@@ -70,6 +74,7 @@ class SupabaseService {
   // ================= PROFILE & USER DATA =================
 
   // GET USER MODEL (Full object)
+  // Ambil data profil pengguna lengkap berdasarkan ID.
   Future<UserModel?> getUserModel(String userId) async {
     try {
       final data = await _supabase
@@ -87,7 +92,7 @@ class SupabaseService {
   }
 
   // GET CURRENT PROFILE (Sering digunakan di Homepage/Login)
-  // PERBAIKAN: Menambahkan 'avatar_url' ke dalam query select
+  // Ambil informasi profil saat ini termasuk role dan avatar.
   Future<Map<String, dynamic>?> getCurrentUserProfile() async {
     final user = currentUser;
     if (user == null) return null;
@@ -106,6 +111,7 @@ class SupabaseService {
   }
 
   // UPDATE PROFILE
+  // Memperbarui nama, telepon, dan avatar di tabel profiles.
   Future<void> updateUserProfile({
     required String name,
     required String phone,
@@ -129,6 +135,7 @@ class SupabaseService {
   }
 
   // UPLOAD AVATAR TO STORAGE
+  // Simpan avatar di storage Supabase dan kembalikan public URL.
   Future<String?> uploadAvatar({
     required Uint8List fileBytes,
     required String extension,
@@ -162,6 +169,7 @@ class SupabaseService {
   // ================= RESERVATIONS =================
 
   // CREATE RESERVATION
+  // Simpan reservasi baru ke tabel reservations.
   Future<void> createReservation(Reservation reservation) async {
     final user = currentUser;
     if (user == null) throw "Sesi berakhir, silakan login kembali";
@@ -178,6 +186,7 @@ class SupabaseService {
   }
 
   // STREAM RESERVATION (Realtime)
+  // Stream data reservasi agar UI dapat update otomatis.
   Stream<List<Reservation>> getReservationStream() {
     return _supabase
         .from('reservations')
@@ -187,6 +196,7 @@ class SupabaseService {
   }
 
   // UPDATE STATUS RESERVASI
+  // Ubah status reservasi seperti pending/approved/rejected.
   Future<void> updateReservationStatus(String id, String status) async {
     try {
       await _supabase
@@ -199,6 +209,7 @@ class SupabaseService {
   }
 
   // GET ALL RESERVATIONS (Future)
+  // Ambil semua reservasi untuk tampilan daftar riwayat.
   Future<List<Reservation>> getAllReservations() async {
     try {
       final response = await _supabase
@@ -217,6 +228,7 @@ class SupabaseService {
 
   // ================= STATISTICS =================
 
+  // HITUNG TOTAL RESERVASI BULAN INI
   Future<int> getTotalReservasiBulanIni() async {
     try {
       final now = DateTime.now();

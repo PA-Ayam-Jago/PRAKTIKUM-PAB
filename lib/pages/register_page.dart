@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
 import 'login_page.dart';
 
+// Halaman pendaftaran akun baru.
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -12,6 +13,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  // Form controller dan state pendaftaran.
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -29,6 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final Color surfaceDark = const Color(0xFF161616);
   final Color errorRed = const Color(0xFFCF6679);
 
+  // Transisi halaman dengan efek blur saat berpindah.
   Route _createBlurRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -48,6 +51,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Proses pendaftaran baru melalui Supabase.
   Future<void> _handleRegister() async {
     FocusScope.of(context).unfocus();
 
@@ -86,6 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // Tampilkan notifikasi pesan sukses atau error.
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -140,6 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  // Build UI utama halaman register.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -277,6 +283,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Widget logo kecil di pojok kanan atas.
   Widget _buildTopLogo() {
     return Container(
       width: 150,
@@ -296,6 +303,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Bagian logo dan identitas aplikasi.
   Widget _buildLogoSection() {
     return Column(
       children: [
@@ -323,6 +331,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Judul dan deskripsi halaman pendaftaran.
   Widget _buildHeaderSection() {
     return Column(
       children: [
@@ -343,6 +352,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Pembuat TextFormField bergaya untuk setiap field input.
   Widget _buildSlimTextField({
     required String label,
     required TextEditingController controller,
@@ -412,6 +422,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Tombol pendaftaran utama, menampilkan spinner saat loading.
   Widget _buildCompactButton() {
     return SizedBox(
       width: double.infinity,
@@ -447,6 +458,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // Link navigasi ke halaman login jika sudah memiliki akun.
   Widget _buildFooterLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
