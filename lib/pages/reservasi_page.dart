@@ -493,6 +493,18 @@ class _ReservasiPageState extends State<ReservasiPage> {
   }
 
   // Daftar reservasi yang diambil realtime dari Supabase.
+  List<Map<String, dynamic>> _dedupeReservations(List<Map<String, dynamic>> items) {
+    final unique = <String, Map<String, dynamic>>{};
+    for (final item in items) {
+      final id = item['id']?.toString() ?? '';
+      if (id.isEmpty) continue;
+      if (!unique.containsKey(id)) {
+        unique[id] = item;
+      }
+    }
+    return unique.values.toList();
+  }
+
   Widget _buildList(String uid) {
     return StreamBuilder<List<Map<String, dynamic>>>(
       stream: supabase
@@ -505,7 +517,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
             child: CircularProgressIndicator(color: primaryGold),
           );
 
-        final list = snapshot.data!.where((i) {
+        final list = _dedupeReservations(snapshot.data!).where((i) {
           final query = _searchQuery.toLowerCase();
           final deskripsi = (i['deskripsi'] ?? "").toString().toLowerCase();
           final fullName = (i['full_name'] ?? "").toString().toLowerCase();
@@ -807,13 +819,14 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                     ],
                     validator: (v) {
-                      if (v == null || v.isEmpty) {
+                      final trimmed = v?.trim() ?? '';
+                      if (trimmed.isEmpty) {
                         return "Nama tidak boleh kosong";
                       }
-                      if (v.length < 3) {
+                      if (trimmed.length < 3) {
                         return "Nama terlalu pendek";
                       }
-                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(v)) {
+                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmed)) {
                         return "Nama hanya boleh berisi huruf";
                       }
                       return null;

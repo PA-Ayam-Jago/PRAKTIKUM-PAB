@@ -279,10 +279,15 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return "Email tidak boleh kosong";
                           }
+                          if (value != value.trim())
+                            return "Hapus spasi di awal/akhir";
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           );
@@ -401,6 +406,7 @@ class _LoginPageState extends State<LoginPage> {
     TextInputType? keyboardType,
     TextInputAction? textInputAction,
     Function(String)? onFieldSubmitted,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -422,6 +428,7 @@ class _LoginPageState extends State<LoginPage> {
           obscureText: isPassword && _obscurePassword,
           validator: validator,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
           style: const TextStyle(color: Colors.white, fontSize: 14),

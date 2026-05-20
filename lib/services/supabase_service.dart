@@ -58,8 +58,8 @@ class SupabaseService {
           'email': email,
         });
       }
-    } on AuthException catch (e) {
-      throw e.message;
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw "Registrasi gagal: $e";
     }

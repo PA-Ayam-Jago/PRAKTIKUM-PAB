@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
 import 'login_page.dart';
@@ -203,11 +204,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: _nameController,
                         hint: "Contoh: Budi Santoso",
                         icon: Icons.person_outline_rounded,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[a-zA-Z\s]'),
+                          ),
+                        ],
                         validator: (value) {
-                          if (value == null || value.isEmpty)
-                            return "Nama tidak boleh kosong";
+                          final trimmed = value?.trim() ?? '';
+                          // Tolak input yang memiliki spasi di awal/akhir
+                          if ((value ?? '') != trimmed)
+                            return "Jangan gunakan spasi di awal/akhir";
+                          if (trimmed.isEmpty) return "Nama tidak boleh kosong";
+                          if (trimmed.length < 3)
+                            return "Nama minimal 3 karakter";
                           // Validasi: Hanya huruf dan spasi (Tanpa simbol/emoji)
-                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmed)) {
                             return "Nama hanya boleh berisi huruf";
                           }
                           return null;
@@ -220,12 +231,19 @@ class _RegisterPageState extends State<RegisterPage> {
                         hint: "username@gmail.com",
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty)
+                          final trimmed = value?.trim() ?? '';
+                          // Tolak spasi di awal/akhir
+                          if ((value ?? '') != trimmed)
+                            return "Hapus spasi di awal/akhir";
+                          if (trimmed.isEmpty)
                             return "Email tidak boleh kosong";
                           if (!RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          ).hasMatch(value.trim()))
+                          ).hasMatch(trimmed))
                             return "Format email tidak valid";
                           return null;
                         },
@@ -362,6 +380,7 @@ class _RegisterPageState extends State<RegisterPage> {
     bool isObscure = false,
     VoidCallback? onToggle,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -383,6 +402,7 @@ class _RegisterPageState extends State<RegisterPage> {
           obscureText: isPassword && isObscure,
           validator: validator,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           style: const TextStyle(color: Colors.white, fontSize: 14),
           decoration: InputDecoration(
             hintText: hint,
